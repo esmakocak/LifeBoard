@@ -22,7 +22,7 @@ class MemoryGameViewModel: ObservableObject {
     init() {
         resetGame()
     }
-
+    
     func flipCard(_ index: Int) {
         guard !cards[index].isMatched else { return }
         guard !cards[index].isFlipped else { return }
@@ -64,16 +64,31 @@ class MemoryGameViewModel: ObservableObject {
 }
 
 struct MemoryCardsView: View {
+    @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel = MemoryGameViewModel()
-
+    
     var body: some View {
         ZStack {
             VStack {
+                HStack {
+                    Button(action: {
+                        dismiss()  // 📌 Sayfayı kapat
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.largeTitle)
+                            .foregroundColor(.black)
+                            .padding()
+                    }
+                    
+                    Spacer()
+                }
+                
                 Text("Matching Cards")
                     .font(.title)
+                    .foregroundStyle(.black)
                     .bold()
                     .padding(.top, 20)
-
+                
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 10) {
                     ForEach(viewModel.cards.indices, id: \.self) { index in
                         CardView(card: viewModel.cards[index])
@@ -95,7 +110,7 @@ struct MemoryCardsView: View {
                             .font(.headline)
                             .fontWeight(.semibold)
                             .foregroundColor(.blue)
-
+                        
                         Button("Play Again") {
                             viewModel.resetGame()
                         }
@@ -110,12 +125,13 @@ struct MemoryCardsView: View {
             }
         }
         .frame(maxHeight: .infinity)
+        
     }
 }
 
 struct CardView: View {
     var card: Card
-
+    
     var body: some View {
         ZStack {
             if card.isFlipped {
