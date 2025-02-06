@@ -1,18 +1,14 @@
-//
-//  AddNoteView.swift
-//  LifeBoard
-//
-//  Created by Esma Koçak on 5.02.2025.
-//
-
 import SwiftUI
 import AVFoundation
 
 struct AddNoteView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var notes: [String]  // Ana ekrana veri göndermek için Binding
-
+    @Binding var notes: [(text: String, color: Color)] // Notlar artık renk ile saklanıyor
+    
     @State private var newNote = ""  // Yeni not girişi
+    @State private var selectedColor: Color = .yellow // Varsayılan renk
+
+    let colors: [Color] = [.yellow, .purple, .green, .blue, .orange, .pink] // Seçilebilir renkler
 
     var body: some View {
         VStack {
@@ -24,9 +20,26 @@ struct AddNoteView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
+            // 🔹 Renk Seçme Alanı
+            HStack {
+                ForEach(colors, id: \.self) { color in
+                    Circle()
+                        .fill(color)
+                        .frame(width: 40, height: 40)
+                        .overlay(
+                            Circle()
+                                .stroke(selectedColor == color ? Color.black : Color.clear, lineWidth: 2)
+                        )
+                        .onTapGesture {
+                            selectedColor = color
+                        }
+                }
+            }
+            .padding()
+
             Button("Kaydet") {
                 if !newNote.isEmpty {
-                    notes.append(newNote)  // Yeni notu listeye ekle
+                    notes.append((text: newNote, color: selectedColor))  // Not ve rengi kaydet
                 }
                 dismiss()  // Sheet’i kapat
             }

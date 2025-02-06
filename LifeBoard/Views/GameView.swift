@@ -16,7 +16,7 @@ struct GameView: View {
                 }
                 
                 NavigationLink(destination: MathQuizView()) {
-                    gameButton(title: "Oyun 2")
+                    gameButton(title: "Math Quiz")
                 }
                 
                 Spacer()

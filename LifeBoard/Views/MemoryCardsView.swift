@@ -70,11 +70,10 @@ struct MemoryCardsView: View {
         ZStack {
             VStack {
                 Text("Matching Cards")
-                    .font(.largeTitle)
+                    .font(.title)
                     .bold()
                     .padding(.top, 20)
 
-                // 📌 Grid düzenini sabit tutuyoruz
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 10) {
                     ForEach(viewModel.cards.indices, id: \.self) { index in
                         CardView(card: viewModel.cards[index])
@@ -92,12 +91,12 @@ struct MemoryCardsView: View {
                 VStack {
                     Spacer()
                     VStack {
-                        Text("🎉 Tebrikler! Oyunu Bitirdin! 🎉")
-                            .font(.title2)
-                            .foregroundColor(.green)
-                            .padding()
+                        Text("🎉 Congrats! You found all pairs! 🎉")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.blue)
 
-                        Button("Tekrar Oyna") {
+                        Button("Play Again") {
                             viewModel.resetGame()
                         }
                         .padding()
@@ -106,11 +105,11 @@ struct MemoryCardsView: View {
                         .cornerRadius(10)
                     }
                     .padding()
+                    .padding(.bottom, 20)
                 }
             }
         }
         .frame(maxHeight: .infinity)
-        .toolbar(.hidden, for: .tabBar)
     }
 }
 

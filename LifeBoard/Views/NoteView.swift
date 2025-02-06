@@ -10,44 +10,35 @@ import AVFoundation
 
 struct NoteView: View {
     @State private var isAddingNote = false
-    @State private var notes: [String] = []  // Notları tutacak dizi
-    private let speechSynthesizer = AVSpeechSynthesizer() // Sesli okuma motoru
+    @State private var notes: [(text: String, color: Color)] = [] // Notlar artık renk içeriyor
+    private let speechSynthesizer = AVSpeechSynthesizer()
 
     var body: some View {
         NavigationStack {
             VStack {
-                List {
-                    ForEach(notes, id: \.self) { note in
-                        HStack {
-                            Text(note)  // Kaydedilen notları göster
-
-                            Spacer()
-
-                            Button(action: {
-                                speakText(note)
-                            }) {
-                                Image(systemName: "speaker.wave.2.fill")
-                                    .foregroundColor(.blue)
-                                    .padding(8)
-                                    .background(Color(.systemGray6))
-                                    .clipShape(Circle())
-                            }
-                            .accessibilityLabel("\(note) notunu sesli oku") // VoiceOver etiketi
+                ScrollView {
+                    VStack(spacing: 15) {
+                        ForEach(notes.indices, id: \.self) { index in
+                            noteCard(note: notes[index].text, color: notes[index].color)
                         }
                     }
+                    .padding()
                 }
 
                 Button(action: {
                     isAddingNote = true
                 }) {
-                    Text("Yeni Not Ekle")
+                    Text("+")
+                        .font(.title)
+                        .bold()
+                        .frame(width: 30)
                         .padding()
                         .background(Color.blue)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(50)
                 }
                 .sheet(isPresented: $isAddingNote) {
-                    AddNoteView(notes: $notes)  // Binding ile notları ilet
+                    AddNoteView(notes: $notes) // Yeni not ekleme ekranı
                 }
 
                 Spacer()
@@ -56,21 +47,52 @@ struct NoteView: View {
         }
     }
 
+    // 🔹 Notları Kart Formatında Gösteren View
+    @ViewBuilder
+    private func noteCard(note: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(note)
+                .font(.body)
+                .padding()
+                .foregroundColor(.black)
+
+            HStack {
+                Text(Date(), style: .date)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .padding(.leading, 10)
+
+                Spacer()
+
+                Button(action: {
+                    speakText(note)
+                }) {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Color.black.opacity(0.7))
+                        .clipShape(Circle())
+                }
+                .padding(.trailing, 10)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(color)
+        .cornerRadius(12)
+        .shadow(radius: 4)
+    }
+
     // 🔊 **Sistem Dilini Algılayarak Notları Seslendirme**
     func speakText(_ text: String) {
         let utterance = AVSpeechUtterance(string: text)
-        
-        // Kullanıcının telefonunun dili (örn: "tr", "en", "fr", "hi" vb.)
         let systemLanguageCode = Locale.current.language.languageCode?.identifier ?? "en"
-        
-        // TTS sisteminde uygun ses olup olmadığını kontrol et
+
         if let voice = AVSpeechSynthesisVoice(language: systemLanguageCode) {
             utterance.voice = voice
         } else {
-            // Eğer sistemde o dilin sesi yoksa, İngilizce kullan
             utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         }
-        
+
         speechSynthesizer.speak(utterance)
     }
 }
