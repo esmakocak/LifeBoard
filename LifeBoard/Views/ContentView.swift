@@ -15,7 +15,7 @@ struct ContentView: View {
                     Label("Medicines", systemImage: "pills.fill")
                 }
             
-            NoteView()
+            NoteView(context: PersistenceController.shared.context)
                 .tabItem {
                     Label("Notes", systemImage: "note.text")
                 }

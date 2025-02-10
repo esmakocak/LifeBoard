@@ -10,22 +10,9 @@
 		405AECE72D53F7110033FCC8 /* LifeBoard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeBoard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		405AED072D53FF1E0033FCC8 /* Exceptions for "LifeBoard" folder in "LifeBoard" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Model/Note.swift,
-			);
-			target = 405AECE62D53F7110033FCC8 /* LifeBoard */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		405AECE92D53F7110033FCC8 /* LifeBoard */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				405AED072D53FF1E0033FCC8 /* Exceptions for "LifeBoard" folder in "LifeBoard" target */,
-			);
 			path = LifeBoard;
 			sourceTree = "<group>";
 		};

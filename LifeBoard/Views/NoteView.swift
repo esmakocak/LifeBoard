@@ -7,24 +7,31 @@
 
 import SwiftUI
 import AVFoundation
+import CoreData
 
 struct NoteView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var viewModel: NoteViewModel
+    
     @State private var isAddingNote = false
-    @State private var notes: [(text: String, color: Color)] = [] 
     private let speechSynthesizer = AVSpeechSynthesizer()
+
+    init(context: NSManagedObjectContext) {
+        _viewModel = StateObject(wrappedValue: NoteViewModel(context: context))
+    }
 
     var body: some View {
         NavigationStack {
             VStack {
                 ScrollView {
                     VStack(spacing: 15) {
-                        ForEach(notes.indices, id: \.self) { index in
-                            noteCard(note: notes[index].text, color: notes[index].color)
+                        ForEach(viewModel.notes) { note in
+                            noteCard(note: note)
                         }
                     }
                     .padding()
                 }
-
+                
                 Button(action: {
                     isAddingNote = true
                 }) {
@@ -38,7 +45,7 @@ struct NoteView: View {
                         .cornerRadius(50)
                 }
                 .sheet(isPresented: $isAddingNote) {
-                    AddNoteView(notes: $notes) // Yeni not ekleme ekranı
+                    AddNoteView(viewModel: viewModel)
                 }
 
                 Spacer()
@@ -47,17 +54,17 @@ struct NoteView: View {
         }
     }
 
-    // 🔹 Notları Kart Formatında Gösteren View
+    // 🔹 CoreData'dan gelen notları gösteren kart
     @ViewBuilder
-    private func noteCard(note: String, color: Color) -> some View {
+    private func noteCard(note: Note) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(note)
+            Text(note.text ?? "Boş Not")
                 .font(.body)
                 .padding()
                 .foregroundColor(.black)
 
             HStack {
-                Text(Date(), style: .date)
+                Text(note.date ?? Date(), style: .date)
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.leading, 10)
@@ -65,7 +72,7 @@ struct NoteView: View {
                 Spacer()
 
                 Button(action: {
-                    speakText(note)
+                    speakText(note.text ?? "")
                 }) {
                     Image(systemName: "speaker.wave.2.fill")
                         .foregroundColor(.white)
@@ -73,11 +80,23 @@ struct NoteView: View {
                         .background(Color.black.opacity(0.7))
                         .clipShape(Circle())
                 }
+
+                Button(action: {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        viewModel.deleteNote(note: note)
+                    }
+                }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.red)
+                        .padding(10)
+                        .background(Color.gray.opacity(0.2))
+                        .clipShape(Circle())
+                }
                 .padding(.trailing, 10)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(color)
+        .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
         .cornerRadius(12)
         .shadow(radius: 4)
     }
@@ -98,5 +117,5 @@ struct NoteView: View {
 }
 
 #Preview {
-    NoteView()
+    NoteView(context: PersistenceController.shared.context)
 }

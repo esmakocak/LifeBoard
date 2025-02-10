@@ -1,11 +1,10 @@
 import SwiftUI
-import AVFoundation
 
 struct AddNoteView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var notes: [(text: String, color: Color)] // Notlar artık renk ile saklanıyor
-    
-    @State private var newNote = ""  // Yeni not girişi
+    @ObservedObject var viewModel: NoteViewModel
+
+    @State private var newNote = ""  // Yeni not metni
     @State private var selectedColor: Color = .yellow // Varsayılan renk
 
     let colors: [Color] = [.yellow, .purple, .green, .blue, .orange, .pink] // Seçilebilir renkler
@@ -39,14 +38,18 @@ struct AddNoteView: View {
 
             Button("Kaydet") {
                 if !newNote.isEmpty {
-                    notes.append((text: newNote, color: selectedColor))  // Not ve rengi kaydet
+                    viewModel.addNote(text: newNote, color: selectedColor) // 📌 CoreData'ya not ekle
                 }
-                dismiss()  // Sheet’i kapat
+                dismiss()  // 📌 Sheet’i kapat
             }
+            .frame(maxWidth: .infinity)
             .padding()
             .background(Color.green)
             .foregroundColor(.white)
             .cornerRadius(10)
+            .padding(.horizontal)
+
+            Spacer()
         }
         .padding()
     }
