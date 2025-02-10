@@ -10,7 +10,7 @@ import AVFoundation
 
 struct NoteView: View {
     @State private var isAddingNote = false
-    @State private var notes: [(text: String, color: Color)] = [] // Notlar artık renk içeriyor
+    @State private var notes: [(text: String, color: Color)] = [] 
     private let speechSynthesizer = AVSpeechSynthesizer()
 
     var body: some View {
