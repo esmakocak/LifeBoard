@@ -20,15 +20,29 @@ class NoteViewModel: ObservableObject {
     }
 
     // ✅ Not Ekleme Fonksiyonu
-    func addNote(text: String, color: Color) {
+//    func addNote(text: String, color: Color) {
+//        let newNote = Note(context: context)
+//        newNote.id = UUID()
+//        newNote.text = text
+//        newNote.colorHex = color.toHex()
+//        newNote.date = Date()
+//        newNote.reminderDate = Date()
+//
+//        saveContext()
+//        fetchNotes() // 📌 Güncellenmiş veriyi çek
+//    }
+    
+    func addNote(text: String, color: Color, id: String, date: Date? = nil) {
         let newNote = Note(context: context)
         newNote.id = UUID()
         newNote.text = text
         newNote.colorHex = color.toHex()
-        newNote.date = Date()
+        newNote.date = Date() // Notun eklendiği tarih
+        newNote.reminderDate = date // 📌 Hatırlatma tarihini kaydet
 
         saveContext()
         fetchNotes() // 📌 Güncellenmiş veriyi çek
+
     }
     
     // ✅ CoreData'dan Notları Çekme

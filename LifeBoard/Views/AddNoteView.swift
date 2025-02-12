@@ -4,10 +4,12 @@ struct AddNoteView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: NoteViewModel
 
-    @State private var newNote = ""  // Yeni not metni
+    @State private var newNote = ""  // Kullanıcının notu
     @State private var selectedColor: Color = .yellow // Varsayılan renk
+    @State private var isReminderOn: Bool = false // 🔔 Hatırlatma Aç/Kapat
+    @State private var reminderDate: Date = Date() // ⏰ Hatırlatma Zamanı
 
-    let colors: [Color] = [.yellow, .purple, .green, .blue, .orange, .pink] // Seçilebilir renkler
+    let colors: [Color] = [.yellow, .purple, .green, .blue, .orange, .pink]
 
     var body: some View {
         VStack {
@@ -36,11 +38,29 @@ struct AddNoteView: View {
             }
             .padding()
 
+            // 🔔 **Hatırlatma Toggle'ı**
+            Toggle("Hatırlatma Ekle", isOn: $isReminderOn)
+                .padding()
+
+            // ⏰ **Tarih ve Saat Seçici**
+            if isReminderOn {
+                DatePicker("Hatırlatma Zamanı", selection: $reminderDate, displayedComponents: [.date, .hourAndMinute])
+                    .padding()
+            }
+
             Button {
                 if !newNote.isEmpty {
-                    viewModel.addNote(text: newNote, color: selectedColor) // 📌 CoreData'ya not ekle
+                    let id = UUID().uuidString  // 📌 Her nota benzersiz ID ata
+                    
+                    // 📌 **Notu kaydet**
+                    viewModel.addNote(text: newNote, color: selectedColor, id: id, date: isReminderOn ? reminderDate : nil)
+                    
+                    // 📌 **Bildirim ayarla**
+                    if isReminderOn {
+                        NotificationManager.shared.scheduleNotification(id: id, note: newNote, date: reminderDate)
+                    }
                 }
-                dismiss()  // 📌 Sheet’i kapat
+                dismiss()  // Sheet’i kapat
             } label: {
                 Text("Kaydet")
                 .frame(maxWidth: .infinity)
@@ -50,7 +70,7 @@ struct AddNoteView: View {
                 .cornerRadius(10)
                 .padding(.horizontal)
             }
-            
+
             Spacer()
         }
         .padding()

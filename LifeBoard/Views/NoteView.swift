@@ -51,6 +51,9 @@ struct NoteView: View {
                 Spacer()
             }
             .navigationTitle("Notes")
+            .onAppear {
+                NotificationManager.shared.requestNotificationPermission() //  Bildirim izni iste
+            }
         }
     }
 
@@ -64,10 +67,13 @@ struct NoteView: View {
                 .foregroundColor(.black)
 
             HStack {
-                Text(note.date ?? Date(), style: .date)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .padding(.leading, 10)
+                // 🔔 **Hatırlatma Tarihi Göster**
+                if let reminderDate = note.reminderDate {
+                    Text("Hatırlatma: \(reminderDate, style: .date) \(reminderDate, style: .time)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .padding(.leading, 10)
+                }
 
                 Spacer()
 
@@ -84,6 +90,11 @@ struct NoteView: View {
                 Button(action: {
                     withAnimation(.easeOut(duration: 0.2)) {
                         viewModel.deleteNote(note: note)
+                        
+                        // 📌 **Bildirimi de Sil**
+                        if let id = note.id {
+                            NotificationManager.shared.removeNotification(identifier: UUID().uuidString)
+                        }
                     }
                 }) {
                     Image(systemName: "trash")
