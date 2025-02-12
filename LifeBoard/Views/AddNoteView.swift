@@ -36,19 +36,21 @@ struct AddNoteView: View {
             }
             .padding()
 
-            Button("Kaydet") {
+            Button {
                 if !newNote.isEmpty {
                     viewModel.addNote(text: newNote, color: selectedColor) // 📌 CoreData'ya not ekle
                 }
                 dismiss()  // 📌 Sheet’i kapat
+            } label: {
+                Text("Kaydet")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .padding(.horizontal)
             }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.green)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding(.horizontal)
-
+            
             Spacer()
         }
         .padding()

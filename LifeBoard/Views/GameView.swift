@@ -14,32 +14,33 @@ struct GameView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                Button("Matching Cards") {
+                Button {
                     isGame1Presented.toggle()
+                } label: {
+                    Text("Matching Cards")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $isGame1Presented) {
                     MemoryCardsView()
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.blue)
-                .frame(maxWidth: .infinity)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                
-                Button("Math Quiz") {
+
+                Button {
                     isGame2Presented.toggle()
+                } label: {
+                    Text("Math Quiz")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
                 }
                 .fullScreenCover(isPresented: $isGame2Presented) {
                     MathQuizView()
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.blue)
-
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                
                 
                 Spacer()
             }
