@@ -3,11 +3,13 @@ import SwiftUI
 struct AddNoteView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: NoteViewModel
+    @ObservedObject var notificationManager = NotificationManager.shared
 
-    @State private var newNote = ""  // Kullanıcının notu
-    @State private var selectedColor: Color = .yellow // Varsayılan renk
-    @State private var isReminderOn: Bool = false // 🔔 Hatırlatma Aç/Kapat
-    @State private var reminderDate: Date = Date() // ⏰ Hatırlatma Zamanı
+    @State private var newNote = ""
+    @State private var selectedColor: Color = .yellow
+    @State private var isReminderOn: Bool = false
+    @State private var reminderDate: Date = Date()
+    @State private var showAlert: Bool = false
 
     let colors: [Color] = [.yellow, .purple, .green, .blue, .orange, .pink]
 
@@ -21,7 +23,6 @@ struct AddNoteView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
 
-            // 🔹 Renk Seçme Alanı
             HStack {
                 ForEach(colors, id: \.self) { color in
                     Circle()
@@ -41,6 +42,12 @@ struct AddNoteView: View {
             // 🔔 **Hatırlatma Toggle'ı**
             Toggle("Hatırlatma Ekle", isOn: $isReminderOn)
                 .padding()
+                .onChange(of: isReminderOn) { newValue in
+                    if newValue && !notificationManager.isNotificationAllowed {
+                        isReminderOn = false // 🚨 Toggle'ı otomatik geri kapat
+                        showAlert = true // 🚨 Alert'i aç
+                    }
+                }
 
             // ⏰ **Tarih ve Saat Seçici**
             if isReminderOn {
@@ -50,17 +57,14 @@ struct AddNoteView: View {
 
             Button {
                 if !newNote.isEmpty {
-                    let id = UUID().uuidString  // 📌 Her nota benzersiz ID ata
-                    
-                    // 📌 **Notu kaydet**
+                    let id = UUID().uuidString
                     viewModel.addNote(text: newNote, color: selectedColor, id: id, date: isReminderOn ? reminderDate : nil)
-                    
-                    // 📌 **Bildirim ayarla**
+
                     if isReminderOn {
                         NotificationManager.shared.scheduleNotification(id: id, note: newNote, date: reminderDate)
                     }
                 }
-                dismiss()  // Sheet’i kapat
+                dismiss()
             } label: {
                 Text("Kaydet")
                 .frame(maxWidth: .infinity)
@@ -74,5 +78,20 @@ struct AddNoteView: View {
             Spacer()
         }
         .padding()
+        .onAppear {
+            notificationManager.checkNotificationStatus() // 📌 İlk açılışta güncelle
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            print("Uygulama aktif oldu, bildirim izni tekrar kontrol ediliyor...")
+            notificationManager.checkNotificationStatus() // 📌 Uygulamaya geri dönüldüğünde çalışacak!
+        }
+        .alert("Bildirimlere İzin Verilmedi", isPresented: $showAlert) {
+            Button("Ayarları Aç") {
+                notificationManager.openAppSettings()
+            }
+            Button("Tamam", role: .cancel) { }
+        } message: {
+            Text("Hatırlatma eklemek için bildirimlere izin vermelisiniz. Ayarlardan bildirim iznini açabilirsiniz.")
+        }
     }
 }

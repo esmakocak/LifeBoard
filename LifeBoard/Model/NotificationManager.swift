@@ -7,22 +7,43 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
-class NotificationManager {
-    static let shared = NotificationManager() // Singleton
+class NotificationManager: ObservableObject {
+    static let shared = NotificationManager()
+
+    @Published var isNotificationAllowed: Bool = false
+
+    private init() {
+        checkNotificationStatus()
+    }
 
     func requestNotificationPermission() {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if granted {
-                print("allowed notifications")
-            } else {
-                print("not allowed notifications")
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+            DispatchQueue.main.async {
+                self.isNotificationAllowed = granted
             }
         }
     }
 
+    func checkNotificationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                self.isNotificationAllowed = settings.authorizationStatus == .authorized
+            }
+        }
+    }
+
+    func openAppSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+
     func scheduleNotification(id: String, note: String, date: Date) {
+        guard isNotificationAllowed else { return }
+
         let content = UNMutableNotificationContent()
         content.title = "LifeBoard 📌"
         content.body = note
