@@ -11,7 +11,7 @@ import SwiftUI
 struct LifeBoardApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
