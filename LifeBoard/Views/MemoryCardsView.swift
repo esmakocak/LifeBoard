@@ -56,7 +56,7 @@ class MemoryGameViewModel: ObservableObject {
     }
     
     func resetGame() {
-        let emojis = ["🩵", "🫐", "🦋", "💙", "🧿","❄️"]
+        let emojis = ["☕️", "🕯️", "🪩", "🎀", "🌷","🧸"]
         let shuffledEmojis = (emojis + emojis).shuffled()
         cards = shuffledEmojis.map { Card(emoji: $0) }
         isGameOver = false
@@ -109,15 +109,17 @@ struct MemoryCardsView: View {
                         Text("🎉 Congrats! You found all pairs! 🎉")
                             .font(.headline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.blue)
+                            .foregroundColor(.black)
                         
                         Button("Play Again") {
                             viewModel.resetGame()
                         }
                         .padding()
-                        .background(Color.blue)
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .frame(width: 150)
+                        .background(Color.black)
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(20)
                     }
                     .padding()
                     .padding(.bottom, 20)
@@ -136,16 +138,16 @@ struct CardView: View {
         ZStack {
             if card.isFlipped {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white)
+                    .fill(Color("lightPink"))
                     .frame(width: 110, height: 110)
-                    .shadow(radius: 5)
+                    .shadow(color: Color.black.opacity(0.3), radius: 3, x: 0, y: 3)
                 Text(card.emoji)
                     .font(.system(size: 55))
             } else {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.blue)
+                    .fill(Color("darkPink"))
                     .frame(width: 110, height: 110)
-                    .shadow(radius: 5)
+                    .shadow(radius: 2)
             }
         }
         .animation(.easeInOut(duration: 0.3), value: card.isFlipped)

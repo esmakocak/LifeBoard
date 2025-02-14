@@ -21,7 +21,6 @@ struct WelcomeView: View {
                     .padding(.horizontal, 40)
 
                 Button(action: {
-                    // Kullanıcı ilerlediğinde bir flag değiştirilecek
                     UserDefaults.standard.set(true, forKey: "hasSeenWelcomeScreen")
                 }) {
                     Text("Get Started")

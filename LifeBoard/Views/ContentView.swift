@@ -25,7 +25,7 @@ struct ContentView: View {
                     Label("Games", systemImage: "gamecontroller.fill")
                 }
             
-        } .accentColor(.red)
+        } .accentColor(Color("darkPurple"))
     }
 }
 

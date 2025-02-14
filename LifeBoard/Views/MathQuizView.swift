@@ -39,12 +39,14 @@ struct MathQuizView: View {
                     .foregroundStyle(.black)
                     .bold()
                     .padding(.top, 20)
-                
+
                 // Soru ve cevap seçenekleri
                 Text("\(viewModel.firstNumber) + \(viewModel.secondNumber)")
                     .font(.largeTitle)
                     .foregroundStyle(.black)
                     .bold()
+                    .padding(.top, 20)
+
                 
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(viewModel.choiceArray, id: \.self) { number in
@@ -77,24 +79,24 @@ struct MathQuizView: View {
                     Spacer()
                     VStack {
                         Text("🎉 Congrats! Your Score: \(viewModel.score)")
-                            .font(.title2)
-                            .bold()
-                            .padding()
-                            .foregroundStyle(.black)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                            .padding(.bottom)
 
                         Button(action: viewModel.resetGame) {
                             Text("Play Again")
-                                .font(.title2)
-                                .bold()
                                 .padding()
-                                .frame(width: 200, height: 50)
-                                .background(Color.blue)
+                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                                .frame(width: 150)
+                                .background(Color.black)
                                 .foregroundColor(.white)
-                                .cornerRadius(10)
+                                .cornerRadius(20)
+                            
                         }
                     }
                     .padding()
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 40)
                 }
             }
         }
@@ -111,8 +113,8 @@ struct AnswerButton: View {
     var body: some View {
         Text("\(number)")
             .frame(width: 110, height: 110)
-            .font(.system(size: 40, weight: .bold))
-            .foregroundColor(.white)
+            .font(.system(size: 40, weight: .bold, design: .rounded))
+            .foregroundColor(.black)
             .background(buttonColor)
             .clipShape(Circle())
             .padding()
@@ -121,12 +123,12 @@ struct AnswerButton: View {
     private var buttonColor: Color {
         if let selected = selectedAnswer {
             if selected == number {
-                return (isCorrectAnswerSelected == true) ? .green : .red
+                return (isCorrectAnswerSelected == true) ? Color("customGreen") : Color("customRed")
             } else if number == correctAnswer && isCorrectAnswerSelected == false {
-                return .green
+                return Color("customGreen")
             }
         }
-        return .blue
+        return Color("lightPurple")
     }
 }
 

@@ -11,7 +11,7 @@ struct AddNoteView: View {
     @State private var reminderDate: Date = Date()
     @State private var showAlert: Bool = false
 
-    let colors: [Color] = [.yellow, .purple, .green, .blue, .orange, .pink]
+    let colors: [Color] = [Color("lightPink"), Color("lightPurple"), Color("lightBlue")]
 
     var body: some View {
         VStack {

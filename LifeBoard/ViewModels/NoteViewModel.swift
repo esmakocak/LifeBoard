@@ -18,19 +18,6 @@ class NoteViewModel: ObservableObject {
         self.context = context
         fetchNotes() // 📌 Uygulama açıldığında CoreData'dan notları çek
     }
-
-    // ✅ Not Ekleme Fonksiyonu
-//    func addNote(text: String, color: Color) {
-//        let newNote = Note(context: context)
-//        newNote.id = UUID()
-//        newNote.text = text
-//        newNote.colorHex = color.toHex()
-//        newNote.date = Date()
-//        newNote.reminderDate = Date()
-//
-//        saveContext()
-//        fetchNotes() // 📌 Güncellenmiş veriyi çek
-//    }
     
     func addNote(text: String, color: Color, id: String, date: Date? = nil) {
         let newNote = Note(context: context)
