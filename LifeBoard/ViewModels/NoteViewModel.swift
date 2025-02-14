@@ -64,9 +64,9 @@ class NoteViewModel: ObservableObject {
     // 🔹 **Mock Verileri Yükleme (Geçici)** !!!!!!!!!!!!!!!!!!!!!
     private func loadMockData() {
         notes = [
-            createMockNote(text: "Alışveriş Listesi", colorHex: "#ffc8dd", reminder: nil),
-            createMockNote(text: "Toplantı Notları", colorHex: "#e2c4f2", reminder: nil),
             createMockNote(text: "Dişçi Randevusu", colorHex: "#bde0fe", reminder: nil),
+            createMockNote(text: "Toplantı Notları", colorHex: "#e2c4f2", reminder: nil),
+            createMockNote(text: "Alışveriş Listesi", colorHex: "#ffc8dd", reminder: nil),
             createMockNote(text: "Alışveriş Listesi", colorHex: "#ffc8dd", reminder: nil),
             createMockNote(text: "Toplantı Notları", colorHex: "#e2c4f2", reminder: nil),
             createMockNote(text: "Dişçi Randevusu", colorHex: "#bde0fe", reminder: nil),

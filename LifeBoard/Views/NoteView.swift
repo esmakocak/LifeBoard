@@ -25,9 +25,18 @@ struct NoteView: View {
             ZStack {
                 VStack {
                     ScrollView {
-                        VStack(spacing: 15) {
-                            ForEach(viewModel.notes) { note in
-                                noteCard(note: note)
+                        HStack(alignment: .top, spacing: 10) {
+                            VStack {
+                                // İlk yarısını göster
+                                ForEach(viewModel.notes.prefix(viewModel.notes.count / 2)) { note in
+                                    noteCard(note: note)
+                                }
+                            }
+                            VStack {
+                                // İkinci yarısını göster
+                                ForEach(viewModel.notes.suffix(viewModel.notes.count / 2)) { note in
+                                    noteCard(note: note)
+                                }
                             }
                         }
                         .padding()
@@ -106,10 +115,10 @@ struct NoteView: View {
                 .padding(.trailing, 10)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
+        .frame(height: CGFloat.random(in: 130...400)) 
         .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
-        .cornerRadius(12)
-        .shadow(radius: 4)
+        .cornerRadius(15)
     }
 
     // 🔊 **Notu Sesli Okuma**
