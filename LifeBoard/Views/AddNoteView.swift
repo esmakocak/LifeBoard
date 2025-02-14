@@ -6,7 +6,7 @@ struct AddNoteView: View {
     @ObservedObject var notificationManager = NotificationManager.shared
 
     @State private var newNote = ""
-    @State private var selectedColor: Color = .yellow
+    @State private var selectedColor: Color = Color("lightPink")
     @State private var isReminderOn: Bool = false
     @State private var reminderDate: Date = Date()
     @State private var showAlert: Bool = false

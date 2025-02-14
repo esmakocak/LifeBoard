@@ -12,7 +12,7 @@ import CoreData
 struct NoteView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var viewModel: NoteViewModel
-    
+
     @State private var isAddingNote = false
     private let speechSynthesizer = AVSpeechSynthesizer()
 
@@ -22,42 +22,45 @@ struct NoteView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                ScrollView {
-                    VStack(spacing: 15) {
-                        ForEach(viewModel.notes) { note in
-                            noteCard(note: note)
+            ZStack {
+                VStack {
+                    ScrollView {
+                        VStack(spacing: 15) {
+                            ForEach(viewModel.notes) { note in
+                                noteCard(note: note)
+                            }
                         }
+                        .padding()
                     }
-                    .padding()
                 }
-                
+                .navigationTitle("Notes")
+                .onAppear {
+                    NotificationManager.shared.requestNotificationPermission()
+                }
+            }
+            .overlay(
+                // 📌 **Floating Action Button (FAB)**
                 Button(action: {
                     isAddingNote = true
                 }) {
-                    Text("+")
-                        .font(.title)
-                        .bold()
-                        .frame(width: 30)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(50)
+                    Image(systemName: "plus")
+                        .font(.system(size: 26, weight: .bold))
+                        .frame(width: 60, height: 60)
+                        .background(Color.black) // FAB arka plan rengi
+                        .foregroundColor(.white) // İkon rengi
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
                 }
+                .padding()
                 .sheet(isPresented: $isAddingNote) {
                     AddNoteView(viewModel: viewModel)
-                }
-
-                Spacer()
-            }
-            .navigationTitle("Notes")
-            .onAppear {
-                NotificationManager.shared.requestNotificationPermission() //  Bildirim izni iste
-            }
+                },
+                alignment: .bottomTrailing // 📌 Sağ alt köşeye sabitle
+            )
         }
     }
 
-    // 🔹 CoreData'dan gelen notları gösteren kart
+    // 🔹 **Not Kartı**
     @ViewBuilder
     private func noteCard(note: Note) -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -67,7 +70,6 @@ struct NoteView: View {
                 .foregroundColor(.black)
 
             HStack {
-                // 🔔 **Hatırlatma Tarihi Göster**
                 if let reminderDate = note.reminderDate {
                     Text("Hatırlatma: \(reminderDate, style: .date) \(reminderDate, style: .time)")
                         .font(.caption)
@@ -90,8 +92,6 @@ struct NoteView: View {
                 Button(action: {
                     withAnimation(.easeOut(duration: 0.2)) {
                         viewModel.deleteNote(note: note)
-                        
-                        // 📌 **Bildirimi de Sil**
                         if let id = note.id {
                             NotificationManager.shared.removeNotification(identifier: UUID().uuidString)
                         }
@@ -112,7 +112,7 @@ struct NoteView: View {
         .shadow(radius: 4)
     }
 
-    // 🔊 **Sistem Dilini Algılayarak Notları Seslendirme**
+    // 🔊 **Notu Sesli Okuma**
     func speakText(_ text: String) {
         let utterance = AVSpeechUtterance(string: text)
         let systemLanguageCode = Locale.current.language.languageCode?.identifier ?? "en"
