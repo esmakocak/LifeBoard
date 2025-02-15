@@ -76,6 +76,13 @@ struct NoteView: View {
                 .font(.body)
                 .padding()
                 .foregroundColor(.black)
+            
+            if let subtext = note.subtext, !subtext.isEmpty {
+                Text(subtext)
+                    .font(.subheadline) // 📌 İçerik formatı
+                    .foregroundColor(.gray)
+                    .padding(.horizontal)
+            }
 
             HStack {
                 if let reminderDate = note.reminderDate {

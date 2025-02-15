@@ -20,17 +20,18 @@ class NoteViewModel: ObservableObject {
         fetchNotes() // 📌 Uygulama açıldığında CoreData'dan notları çek
     }
     
-    func addNote(text: String, color: Color, id: String, date: Date? = nil) {
+    
+    func addNote(text: String, subtext: String, color: Color, id: String, date: Date? = nil) {
         let newNote = Note(context: context)
         newNote.id = UUID()
         newNote.text = text
+        newNote.subtext = subtext
         newNote.colorHex = color.toHex()
-        newNote.date = Date() // Notun eklendiği tarih
-        newNote.reminderDate = date // 📌 Hatırlatma tarihini kaydet
+        newNote.date = Date()
+        newNote.reminderDate = date
 
         saveContext()
-        fetchNotes() // 📌 Güncellenmiş veriyi çek
-
+        fetchNotes()
     }
     
     // ✅ CoreData'dan Notları Çekme
@@ -64,19 +65,20 @@ class NoteViewModel: ObservableObject {
     // 🔹 **Mock Verileri Yükleme (Geçici)** !!!!!!!!!!!!!!!!!!!!!
     private func loadMockData() {
         notes = [
-            createMockNote(text: "Dişçi Randevusu", colorHex: "#bde0fe", reminder: nil),
-            createMockNote(text: "Toplantı Notları", colorHex: "#e2c4f2", reminder: nil),
-            createMockNote(text: "Alışveriş Listesi", colorHex: "#ffc8dd", reminder: nil),
-            createMockNote(text: "Alışveriş Listesi", colorHex: "#ffc8dd", reminder: nil),
-            createMockNote(text: "Toplantı Notları", colorHex: "#e2c4f2", reminder: nil),
-            createMockNote(text: "Dişçi Randevusu", colorHex: "#bde0fe", reminder: nil),
+            createMockNote(text: "Dişçi Randevusu", subtext: "Yarın 10:30'da randevum var.", colorHex: "#bde0fe", reminder: nil),
+            createMockNote(text: "Toplantı Notları", subtext: "Pazartesi yapılacak olan ekip toplantısına hazırlık.", colorHex: "#e2c4f2", reminder: nil),
+            createMockNote(text: "Alışveriş Listesi", subtext: "Süt, ekmek, yumurta, peynir, kahve", colorHex: "#ffc8dd", reminder: nil),
+            createMockNote(text: "Alışveriş Listesi", subtext: "Yarın 10:30'da randevum var.", colorHex: "#ffc8dd", reminder: nil),
+            createMockNote(text: "Toplantı Notları",subtext: "Pazartesi yapılacak olan ekip toplantısına hazırlık.", colorHex: "#e2c4f2", reminder: nil),
+            createMockNote(text: "Dişçi Randevusu", subtext: "Süt, ekmek, yumurta, peynir, kahve", colorHex: "#bde0fe", reminder: nil),
         ]
     }
 
-    private func createMockNote(text: String, colorHex: String, reminder: Date?) -> Note {
+    private func createMockNote(text: String, subtext: String ,colorHex: String, reminder: Date?) -> Note {
         let newNote = Note(context: context)
         newNote.id = UUID()
         newNote.text = text
+        newNote.subtext = subtext
         newNote.colorHex = colorHex
         newNote.reminderDate = reminder
         newNote.date = Date()
