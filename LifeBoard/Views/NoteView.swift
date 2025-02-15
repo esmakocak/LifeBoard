@@ -23,24 +23,23 @@ struct NoteView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                VStack {
-                    ScrollView {
-                        HStack(alignment: .top, spacing: 10) {
-                            VStack {
-                                // İlk yarısını göster
-                                ForEach(viewModel.notes.prefix(viewModel.notes.count / 2)) { note in
-                                    noteCard(note: note)
-                                }
-                            }
-                            VStack {
-                                // İkinci yarısını göster
-                                ForEach(viewModel.notes.suffix(viewModel.notes.count / 2)) { note in
-                                    noteCard(note: note)
-                                }
+                ScrollView {
+                    HStack(alignment: .top, spacing: 10) {
+                        // Sol sütun
+                        LazyVStack(spacing: 10) {
+                            ForEach(viewModel.notes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                noteCard(note: note)
                             }
                         }
-                        .padding()
+
+                        // Sağ sütun
+                        LazyVStack(spacing: 10) {
+                            ForEach(viewModel.notes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                noteCard(note: note)
+                            }
+                        }
                     }
+                    .padding()
                 }
                 .navigationTitle("Notes")
                 .onAppear {
@@ -116,7 +115,7 @@ struct NoteView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: CGFloat.random(in: 130...400)) 
+        .frame(height: CGFloat.random(in: 130...400)) // 📌 Rastgele yükseklik
         .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
         .cornerRadius(15)
     }
