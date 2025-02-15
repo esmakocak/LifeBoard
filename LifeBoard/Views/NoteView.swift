@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AVFoundation
 import CoreData
 
 struct NoteView: View {
@@ -14,7 +13,6 @@ struct NoteView: View {
     @StateObject private var viewModel: NoteViewModel
 
     @State private var isAddingNote = false
-    private let speechSynthesizer = AVSpeechSynthesizer()
 
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: NoteViewModel(context: context))
@@ -73,36 +71,27 @@ struct NoteView: View {
     private func noteCard(note: Note) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(note.text ?? "Boş Not")
-                .font(.body)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
                 .padding()
                 .foregroundColor(.black)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
             
+                        
             if let subtext = note.subtext, !subtext.isEmpty {
                 Text(subtext)
-                    .font(.subheadline) // 📌 İçerik formatı
-                    .foregroundColor(.gray)
+                    .font(.headline)
+                    .foregroundColor(.black.opacity(0.7))
+                    .lineLimit(3)
+                    .truncationMode(.tail)
                     .padding(.horizontal)
             }
-
+            
+            Spacer()
+            
             HStack {
-                if let reminderDate = note.reminderDate {
-                    Text("Hatırlatma: \(reminderDate, style: .date) \(reminderDate, style: .time)")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .padding(.leading, 10)
-                }
 
                 Spacer()
-
-                Button(action: {
-                    speakText(note.text ?? "")
-                }) {
-                    Image(systemName: "speaker.wave.2.fill")
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .background(Color.black.opacity(0.7))
-                        .clipShape(Circle())
-                }
 
                 Button(action: {
                     withAnimation(.easeOut(duration: 0.2)) {
@@ -113,33 +102,22 @@ struct NoteView: View {
                     }
                 }) {
                     Image(systemName: "trash")
-                        .foregroundColor(.red)
+                        .foregroundColor(.blue)
                         .padding(10)
-                        .background(Color.gray.opacity(0.2))
+                        .background(Color.black.opacity(0.1))
                         .clipShape(Circle())
                 }
-                .padding(.trailing, 10)
             }
+            .padding(.trailing, 8)
+            .padding(.bottom, 8)
         }
+        .padding(5)
         .frame(maxWidth: .infinity)
-        .frame(height: CGFloat.random(in: 130...400)) // 📌 Rastgele yükseklik
+        .frame(height: CGFloat.random(in: 200...350))
         .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
         .cornerRadius(15)
     }
 
-    // 🔊 **Notu Sesli Okuma**
-    func speakText(_ text: String) {
-        let utterance = AVSpeechUtterance(string: text)
-        let systemLanguageCode = Locale.current.language.languageCode?.identifier ?? "en"
-
-        if let voice = AVSpeechSynthesisVoice(language: systemLanguageCode) {
-            utterance.voice = voice
-        } else {
-            utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        }
-
-        speechSynthesizer.speak(utterance)
-    }
 }
 
 #Preview {
