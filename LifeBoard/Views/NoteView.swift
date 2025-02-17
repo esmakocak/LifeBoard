@@ -11,37 +11,56 @@ import CoreData
 struct NoteView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var viewModel: NoteViewModel
-
     @State private var isAddingNote = false
+    @State private var searchText: String = "" // 🔍 Arama için state
 
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: NoteViewModel(context: context))
     }
 
+    // ✅ **Arama Sonucuna Göre Filtreleme**
+    var filteredNotes: [Note] {
+        if searchText.isEmpty {
+            return viewModel.notes
+        } else {
+            return viewModel.notes.filter {
+                $0.text?.localizedCaseInsensitiveContains(searchText) == true ||
+                $0.subtext?.localizedCaseInsensitiveContains(searchText) == true
+            }
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
-                ScrollView {
-                    HStack(alignment: .top, spacing: 10) {
-                        // Sol sütun
-                        LazyVStack(spacing: 10) {
-                            ForEach(viewModel.notes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
-                                noteCard(note: note)
-                            }
-                        }
+                VStack {
+                    
+                    SearchBar()
+                        .padding(.horizontal)
+                        .padding(.top)
 
-                        // Sağ sütun
-                        LazyVStack(spacing: 10) {
-                            ForEach(viewModel.notes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
-                                noteCard(note: note)
+                    ScrollView {
+                        HStack(alignment: .top, spacing: 10) {
+                            // Sol sütun
+                            LazyVStack(spacing: 10) {
+                                ForEach(filteredNotes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                    noteCard(note: note)
+                                }
+                            }
+                            
+                            // Sağ sütun
+                            LazyVStack(spacing: 10) {
+                                ForEach(filteredNotes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                    noteCard(note: note)
+                                }
                             }
                         }
+                        .padding()
                     }
-                    .padding()
-                }
-                .navigationTitle("Notes")
-                .onAppear {
-                    NotificationManager.shared.requestNotificationPermission()
+                    .navigationTitle("Notes")
+                    .onAppear {
+                        NotificationManager.shared.requestNotificationPermission()
+                    }
                 }
             }
             .overlay(
@@ -69,55 +88,55 @@ struct NoteView: View {
     // 🔹 **Not Kartı**
     @ViewBuilder
     private func noteCard(note: Note) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(note.text ?? "Boş Not")
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .padding()
-                .foregroundColor(.black)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-            
-                        
-            if let subtext = note.subtext, !subtext.isEmpty {
-                Text(subtext)
-                    .font(.headline)
-                    .foregroundColor(.black.opacity(0.7))
-                    .lineLimit(3)
-                    .truncationMode(.tail)
-                    .padding(.horizontal)
-            }
-            
-            Spacer()
-            
-            HStack {
+        NavigationLink(destination: NoteDetailView(note: note)) {
+            VStack(alignment: .leading, spacing: 8) {
+
+                if let text = note.text, !text.isEmpty {
+                    Text(text)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .padding()
+                        .foregroundColor(.black)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: false)
+                }
+                
+                if let subtext = note.subtext, !subtext.isEmpty {
+                    Text(subtext)
+                        .font(.headline)
+                        .foregroundColor(.black.opacity(0.7))
+                        .lineLimit(3)
+                        .truncationMode(.tail)
+                        .padding(.horizontal)
+                }
 
                 Spacer()
-
-                Button(action: {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        viewModel.deleteNote(note: note)
-                        if let id = note.id {
-                            NotificationManager.shared.removeNotification(identifier: UUID().uuidString)
-                        }
-                    }
-                }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.blue)
-                        .padding(10)
-                        .background(Color.black.opacity(0.1))
-                        .clipShape(Circle())
-                }
             }
-            .padding(.trailing, 8)
-            .padding(.bottom, 8)
+            .padding(5)
+            .frame(maxWidth: .infinity)
+            .frame(height: CGFloat.random(in: 200...330))
+            .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
+            .cornerRadius(15)
         }
-        .padding(5)
-        .frame(maxWidth: .infinity)
-        .frame(height: CGFloat.random(in: 200...350))
-        .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
-        .cornerRadius(15)
+        .buttonStyle(PlainButtonStyle())
     }
+    
+    // 🔍 **Search Bar**
+    @ViewBuilder
+    func SearchBar() -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
 
+            TextField("Search..", text: $searchText)
+                .textFieldStyle(PlainTextFieldStyle())
+                .autocorrectionDisabled()
+                .padding(.leading, 5)
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 15)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+    }
 }
 
 #Preview {
