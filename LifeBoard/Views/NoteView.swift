@@ -85,7 +85,7 @@ struct NoteView: View {
             )
         }
         .fullScreenCover(item: $selectedNote) { note in
-            NoteDetailView(note: note)
+            NoteDetailView(note: note, viewModel: viewModel)
         }
     }
     

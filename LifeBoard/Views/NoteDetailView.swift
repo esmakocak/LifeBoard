@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NoteDetailView: View {
     let note: Note
+    @ObservedObject var viewModel: NoteViewModel
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -47,7 +48,10 @@ struct NoteDetailView: View {
                     }
                     
                     Button {
-                        
+                        withAnimation {
+                            viewModel.deleteNote(note: note) // Notu sil
+                            dismiss()
+                        }
                     } label : {
                         Image(systemName: "trash.fill")
                             .font(.title2)
@@ -83,12 +87,10 @@ struct NoteDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.white)
             
- 
             WaveShape()
                 .fill(backgroundColor)
                 .frame(height: 190)
 
-            
             WaveShape()
                 .fill(iconColor)
                 .frame(height: 150)
