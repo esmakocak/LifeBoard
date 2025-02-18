@@ -11,13 +11,24 @@ struct AddNoteView: View {
     @State private var isReminderOn: Bool = false
     @State private var reminderDate: Date = Date()
     @State private var showAlert: Bool = false
-    
+    var noteToEdit: Note? // ✅ Düzenlenecek not (Opsiyonel)
+
     let colors: [Color] = [Color("lightPink"), Color("lightPurple"), Color("lightBlue")]
-    
+
+    init(viewModel: NoteViewModel, noteToEdit: Note? = nil) {
+        self.viewModel = viewModel
+        self.noteToEdit = noteToEdit
+
+        // ✅ Mevcut not varsa, state'leri başlangıç değerleriyle doldur
+        _newNote = State(initialValue: noteToEdit?.text ?? "")
+        _newSubtext = State(initialValue: noteToEdit?.subtext ?? "")
+        _selectedColor = State(initialValue: Color.fromHex(noteToEdit?.colorHex ?? "#FFFF00"))
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
-                Text("Add Note")
+                Text(noteToEdit == nil ? "Add Note" : "Edit Note") // ✅ Dinamik başlık
                     .font(.title2)
                     .bold()
                     .padding(.top, 10)
@@ -44,11 +55,14 @@ struct AddNoteView: View {
                         .foregroundColor(.black.opacity(0.7))
                         .padding(8)
                     
-                    TextField(" ", text: $newSubtext)
+                    TextEditor(text: $newSubtext)
+                        .padding()
                         .frame(minHeight: 100)
+                        .scrollContentBackground(.hidden)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(15)
                 }
+                
                 
                 // 🔹 **Not Rengi**
                 VStack(alignment: .leading, spacing: 5) {
@@ -76,7 +90,7 @@ struct AddNoteView: View {
                     .padding(8)
                     .cornerRadius(10)
                 }
-                
+
                 // 🔹 **Hatırlatma**
                 VStack(alignment: .leading, spacing: 5) {
                     Toggle(isOn: $isReminderOn) {
@@ -95,7 +109,7 @@ struct AddNoteView: View {
                     
                     if isReminderOn {
                         VStack(alignment: .leading, spacing: 5) {
-                            HStack{
+                            HStack {
                                 Text("Reminder Time")
                                     .font(.body)
                                     .bold()
@@ -108,26 +122,36 @@ struct AddNoteView: View {
                                     .labelsHidden()
                                     .background(Color.white)
                                     .cornerRadius(10)
-                                
                             }
                         }
                         .padding(.top, 20)
                     }
                 }
                 
-                // 🔹 **Kaydet Butonu**
+                // 🔹 **Kaydet / Güncelle Butonu**
                 Button {
-                    if !newNote.isEmpty {
+                    if let noteToEdit = noteToEdit {
+                        // ✅ Mevcut notu güncelle
+                        viewModel.updateNote(
+                            note: noteToEdit,
+                            text: newNote,
+                            subtext: newSubtext,
+                            color: selectedColor
+                        )
+                    } else {
+                        // ✅ Yeni not ekle
                         let id = UUID().uuidString
-                        viewModel.addNote(text: newNote, subtext: newSubtext, color: selectedColor, id: id, date: isReminderOn ? reminderDate : nil)
-                        
-                        if isReminderOn {
-                            NotificationManager.shared.scheduleNotification(id: id, note: newNote, date: reminderDate)
-                        }
+                        viewModel.addNote(
+                            text: newNote,
+                            subtext: newSubtext,
+                            color: selectedColor,
+                            id: id,
+                            date: isReminderOn ? reminderDate : nil
+                        )
                     }
                     dismiss()
                 } label: {
-                    Text("Kaydet")
+                    Text(noteToEdit == nil ? "Kaydet" : "Güncelle")
                         .padding()
                         .font(.system(size: 15, weight: .bold, design: .rounded))
                         .frame(width: 150)
@@ -140,7 +164,7 @@ struct AddNoteView: View {
             }
             .padding()
         }
-        .background(Color("lightGray")) // 📌 Arka plan rengini değiştirdik
+        .background(Color("lightGray"))
         .onAppear {
             notificationManager.checkNotificationStatus()
         }

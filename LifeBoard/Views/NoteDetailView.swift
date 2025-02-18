@@ -4,13 +4,13 @@
 //
 //  Created by Esma Koçak on 18.02.2025.
 //
-
 import SwiftUI
 
 struct NoteDetailView: View {
     let note: Note
     @ObservedObject var viewModel: NoteViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var isEditing = false // Düzenleme ekranını kontrol eden state
 
     var body: some View {
         let backgroundColor = Color.fromHex(note.colorHex ?? "#FFFF00")
@@ -36,7 +36,7 @@ struct NoteDetailView: View {
                     Spacer()
                     
                     Button {
-                        
+                        isEditing = true // Düzenleme ekranını aç
                     } label : {
                         Image(systemName: "pencil")
                             .font(.title2)
@@ -49,7 +49,7 @@ struct NoteDetailView: View {
                     
                     Button {
                         withAnimation {
-                            viewModel.deleteNote(note: note) // Notu sil
+                            viewModel.deleteNote(note: note)
                             dismiss()
                         }
                     } label : {
@@ -92,13 +92,15 @@ struct NoteDetailView: View {
                 .frame(height: 190)
 
             WaveShape()
-                .fill(iconColor)
+                .fill(iconColor.opacity(0.8))
                 .frame(height: 150)
         }
         .edgesIgnoringSafeArea(.bottom)
+        .sheet(isPresented: $isEditing) { // Düzenleme ekranını açıyor
+            AddNoteView(viewModel: viewModel, noteToEdit: note) // Mevcut notu düzenleme için gönderiyoruz
+        }
     }
 }
-
 
 struct WaveShape: Shape {
     func path(in rect: CGRect) -> Path {

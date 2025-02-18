@@ -53,6 +53,15 @@ class NoteViewModel: ObservableObject {
         fetchNotes()
     }
 
+    func updateNote(note: Note, text: String, subtext: String, color: Color) {
+        note.text = text
+        note.subtext = subtext
+        note.colorHex = color.toHex()
+
+        saveContext()
+        fetchNotes()
+    }
+    
     // ✅ CoreData'ya Değişiklikleri Kaydetme
     func saveContext() {
         do {
