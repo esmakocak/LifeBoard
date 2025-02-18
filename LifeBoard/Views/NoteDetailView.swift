@@ -30,12 +30,10 @@ struct NoteDetailView: View {
             Spacer()
         }
         .padding()
-        .navigationTitle("Note Details")
-        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
-                    dismiss() // Sayfayı kapat
+                    dismiss()
                 }) {
                     Image(systemName: "xmark")
                         .foregroundColor(.black)
