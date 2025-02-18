@@ -105,7 +105,6 @@ struct NoteView: View {
                     Text(subtext)
                         .font(.headline)
                         .foregroundColor(.black.opacity(0.7))
-                        .lineLimit(4)
                         .truncationMode(.tail)
                         .padding(.horizontal)
                 }

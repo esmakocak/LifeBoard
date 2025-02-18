@@ -69,7 +69,7 @@ class NoteViewModel: ObservableObject {
             createMockNote(text: "Toplantı Notları", subtext: "Pazartesi yapılacak olan ekip toplantısına hazırlık.", colorHex: "#e2c4f2", reminder: nil),
             createMockNote(text: "Alışveriş Listesi", subtext: "Süt, ekmek, yumurta, peynir, kahve", colorHex: "#ffc8dd", reminder: nil),
             createMockNote(text: "Alışveriş Listesi", subtext: "Yarın 10:30'da randevum var.", colorHex: "#ffc8dd", reminder: nil),
-            createMockNote(text: "Toplantı Notları",subtext: "Pazartesi yapılacak olan ekip toplantısına hazırlık.", colorHex: "#e2c4f2", reminder: nil),
+            createMockNote(text: "Toplantı Notları",subtext: "Pazartesi yapılacak olan ekip toplantısına hazırlık. Pazartesi yapılacak olan ekip toplantısına hazırlık. Pazartesi yapılacak olan ekip toplantısına hazırlık. Pazartesi yapılacak olan ekip toplantısına hazırlık. Pazartesi yapılacak olan ekip toplantısına hazırlık. Pazartesi yapılacak olan ekip toplantısına hazırlık. Pazap toplantısına hazırlık.Pazartesi yapılacak olan ekip toplantısına hazırlık.", colorHex: "#e2c4f2", reminder: nil),
             createMockNote(text: "Dişçi Randevusu", subtext: "Süt, ekmek, yumurta, peynir, kahve", colorHex: "#bde0fe", reminder: nil),
         ]
     }
