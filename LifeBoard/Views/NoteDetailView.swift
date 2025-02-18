@@ -14,11 +14,56 @@ struct NoteDetailView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            
+            HStack {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "arrowshape.turn.up.backward.fill")
+                        .font(.title2)
+                        .foregroundColor(Color("darkPink"))
+                        .bold()
+                        .padding(10)
+                        .background(Color.darkPink.opacity(0.2))
+                        .clipShape(Circle())
+                }
+                .padding(.leading, 10)
+                
+                Spacer()
+                
+                Button {
+                    
+                } label : {
+                    Image(systemName: "pencil")
+                        .font(.title2)
+                        .foregroundColor(Color("darkPink"))
+                        .bold()
+                        .padding(10)
+                        .background(Color.darkPink.opacity(0.2))
+                        .clipShape(Circle())
+                }
+                
+                Button {
+                    
+                } label : {
+                    Image(systemName: "trash.fill")
+                        .font(.title2)
+                        .foregroundColor(Color("darkPink"))
+                        .bold()
+                        .padding(10)
+                        .background(Color.darkPink.opacity(0.2))
+                        .clipShape(Circle())
+                }
+            }
+
+            // Başlık
             Text(note.text ?? "Boş Not")
                 .font(.system(size: 26, weight: .bold, design: .rounded))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.leading)
+                .padding(.top, 5)
             
+            // İçerik
             if let subtext = note.subtext, !subtext.isEmpty {
                 Text(subtext)
                     .font(.body)
@@ -30,18 +75,7 @@ struct NoteDetailView: View {
             Spacer()
         }
         .padding()
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.black)
-                        .padding(8)
-                        .background(Color.gray.opacity(0.2))
-                        .clipShape(Circle())
-                }
-            }
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
     }
 }

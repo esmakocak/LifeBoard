@@ -13,6 +13,8 @@ struct NoteView: View {
     @StateObject private var viewModel: NoteViewModel
     @State private var isAddingNote = false
     @State private var searchText: String = "" // Arama için state
+    @State private var selectedNote: Note?
+    @State private var isDetailPresented = false
     
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: NoteViewModel(context: context))
@@ -82,12 +84,14 @@ struct NoteView: View {
                 alignment: .bottomTrailing // 📌 Sağ alt köşeye sabitle
             )
         }
+        .fullScreenCover(item: $selectedNote) { note in
+            NoteDetailView(note: note)
+        }
     }
     
     // 🔹 **Not Kartı**
     @ViewBuilder
     private func noteCard(note: Note) -> some View {
-        NavigationLink(destination: NoteDetailView(note: note)) {
             VStack(alignment: .leading, spacing: 8) {
                 
                 Text(note.text ?? "Boş Not")
@@ -112,7 +116,6 @@ struct NoteView: View {
 
                     Spacer()
 
-                
                     Button(action: {
                         withAnimation(.easeOut(duration: 0.2)) {
                             viewModel.deleteNote(note: note)
@@ -136,9 +139,14 @@ struct NoteView: View {
             .frame(height: CGFloat.random(in: 200...330))
             .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
             .cornerRadius(15)
-        }
+            .onTapGesture {
+                selectedNote = note
+                isDetailPresented = true
+            }
+        
         .buttonStyle(PlainButtonStyle())
     }
+    
     
     // Search Bar
     @ViewBuilder
@@ -163,4 +171,3 @@ struct NoteView: View {
 #Preview {
     NoteView(context: PersistenceController.shared.context)
 }
-
