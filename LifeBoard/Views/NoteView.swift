@@ -116,23 +116,21 @@ struct NoteView: View {
 
                     Spacer()
 
-                    Button(action: {
-                        withAnimation(.easeOut(duration: 0.2)) {
-                            viewModel.deleteNote(note: note)
-                            if let id = note.id {
-                                NotificationManager.shared.removeNotification(identifier: UUID().uuidString)
-                            }
-                        }
-                    }) {
-                        Image(systemName: "trash")
-                            .foregroundColor(.blue)
-                            .padding(10)
-                            .background(Color.black.opacity(0.1))
-                            .clipShape(Circle())
-                    }
+//                    Button(action: {
+//                        withAnimation(.easeOut(duration: 0.2)) {
+//                            viewModel.deleteNote(note: note)
+//                            if let id = note.id {
+//                                NotificationManager.shared.removeNotification(identifier: UUID().uuidString)
+//                            }
+//                        }
+//                    }) {
+//                        Image(systemName: "trash")
+//                            .foregroundColor(.blue)
+//                            .padding(10)
+//                            .background(Color.black.opacity(0.1))
+//                            .clipShape(Circle())
+//                    }
                 }
-                .padding(.trailing, 8)
-                .padding(.bottom, 8)
             }
             .padding(5)
             .frame(maxWidth: .infinity)

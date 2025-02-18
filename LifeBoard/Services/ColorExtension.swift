@@ -32,4 +32,21 @@ extension Color {
 
         return Color(red: r, green: g, blue: b)
     }
+    
+    /// Açık renklerin koyu versiyonunu döndüren fonksiyon
+    static func getDarkColor(for hex: String) -> Color {
+        let lightToDarkMapping: [String: String] = [
+            "#FFC8DD": "darkPink",   // lightPink → darkPink
+            "#E2C4F2": "darkPurple", // lightPurple → darkPurple
+            "#BDE0FE": "darkBlue"    // lightBlue → darkBlue
+        ]
+
+        let sanitizedHex = hex.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if let darkColorName = lightToDarkMapping[sanitizedHex] {
+            return Color(darkColorName)
+        } else {
+            return Color.black // Varsayılan renk
+        }
+    }
 }

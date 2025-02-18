@@ -9,73 +9,110 @@ import SwiftUI
 
 struct NoteDetailView: View {
     let note: Note
-    
     @Environment(\.dismiss) var dismiss
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            
-            HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "arrowshape.turn.up.backward.fill")
-                        .font(.title2)
-                        .foregroundColor(Color("darkPink"))
-                        .bold()
-                        .padding(10)
-                        .background(Color.darkPink.opacity(0.2))
-                        .clipShape(Circle())
+        let backgroundColor = Color.fromHex(note.colorHex ?? "#FFFF00")
+        let iconColor = Color.getDarkColor(for: note.colorHex ?? "#FFFF00")
+
+        ZStack(alignment: .bottom) {
+            VStack(alignment: .leading, spacing: 10) {
+                
+                HStack {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "arrowshape.turn.up.backward.fill")
+                            .font(.title2)
+                            .foregroundColor(iconColor)
+                            .bold()
+                            .padding(10)
+                            .background(iconColor.opacity(0.2))
+                            .clipShape(Circle())
+                    }
+                    .padding(.leading, 10)
+                    
+                    Spacer()
+                    
+                    Button {
+                        
+                    } label : {
+                        Image(systemName: "pencil")
+                            .font(.title2)
+                            .foregroundColor(iconColor)
+                            .bold()
+                            .padding(10)
+                            .background(iconColor.opacity(0.2))
+                            .clipShape(Circle())
+                    }
+                    
+                    Button {
+                        
+                    } label : {
+                        Image(systemName: "trash.fill")
+                            .font(.title2)
+                            .foregroundColor(iconColor)
+                            .bold()
+                            .padding(10)
+                            .background(iconColor.opacity(0.2))
+                            .clipShape(Circle())
+                    }
                 }
-                .padding(.leading, 10)
+                .padding(.bottom)
+
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        Text(note.text ?? "Boş Not")
+                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .foregroundColor(iconColor)
+                            .padding(.top, 5)
+                        
+                        if let subtext = note.subtext, !subtext.isEmpty {
+                            Text(subtext)
+                                .font(.title2)
+                                .foregroundColor(.black)
+                                .padding(.top, 5)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
                 
                 Spacer()
-                
-                Button {
-                    
-                } label : {
-                    Image(systemName: "pencil")
-                        .font(.title2)
-                        .foregroundColor(Color("darkPink"))
-                        .bold()
-                        .padding(10)
-                        .background(Color.darkPink.opacity(0.2))
-                        .clipShape(Circle())
-                }
-                
-                Button {
-                    
-                } label : {
-                    Image(systemName: "trash.fill")
-                        .font(.title2)
-                        .foregroundColor(Color("darkPink"))
-                        .bold()
-                        .padding(10)
-                        .background(Color.darkPink.opacity(0.2))
-                        .clipShape(Circle())
-                }
             }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(.white)
+            
+ 
+            WaveShape()
+                .fill(backgroundColor)
+                .frame(height: 190)
 
-            // Başlık
-            Text(note.text ?? "Boş Not")
-                .font(.system(size: 26, weight: .bold, design: .rounded))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.leading)
-                .padding(.top, 5)
             
-            // İçerik
-            if let subtext = note.subtext, !subtext.isEmpty {
-                Text(subtext)
-                    .font(.body)
-                    .foregroundColor(.black.opacity(0.7))
-                    .multilineTextAlignment(.leading)
-                    .padding(.top, 5)
-            }
-            
-            Spacer()
+            WaveShape()
+                .fill(iconColor)
+                .frame(height: 150)
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
+        .edgesIgnoringSafeArea(.bottom)
+    }
+}
+
+
+struct WaveShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { path in
+            path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+            
+            path.addQuadCurve(
+                to: CGPoint(x: rect.midX, y: rect.midY),
+                control: CGPoint(x: rect.width * 0.25, y: rect.height * 0.25))
+            
+            path.addQuadCurve(
+                to: CGPoint(x: rect.maxX, y: rect.midY),
+                control: CGPoint(x: rect.width * 0.75, y: rect.height * 0.75))
+            
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY) )
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY) )
+        }
     }
 }
