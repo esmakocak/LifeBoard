@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView{
-            MedicineView()
+            MedicineView(context: PersistenceController.shared.context)
                 .tabItem {
                     Label("Medicines", systemImage: "pills.fill")
                 }
