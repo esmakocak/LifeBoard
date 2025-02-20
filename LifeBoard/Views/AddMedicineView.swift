@@ -20,27 +20,57 @@ struct AddMedicineView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            
+            Text("Add Medicine")
+                .font(.title2)
+                .bold()
+                .padding(.top,20)
+            
+            VStack(alignment: .leading, spacing: 10) {
                 
                 // **İlaç Adı**
-                TextField("Medicine Name", text: $name)
+                Text("Medicine Name")
+                    .font(.body)
+                    .bold()
+                    .foregroundColor(.black.opacity(0.7))
+               
+                TextField("Medicine Name..", text: $name)
                     .padding()
                     .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
+                    .cornerRadius(15)
+                    .padding(.bottom, 10)
                 
                 // **Günler**
+                Text("Date")
+                    .font(.body)
+                    .bold()
+                    .foregroundColor(.black.opacity(0.7))
+                
                 TextField("Days (e.g. Mon, Wed, Fri)", text: $days)
                     .padding()
                     .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
+                    .cornerRadius(15)
+                    .padding(.bottom, 10)
+
                 
                 // **Saat**
+                Text("Time")
+                    .font(.body)
+                    .bold()
+                    .foregroundColor(.black.opacity(0.7))
+                
                 TextField("Time (e.g. 08:30)", text: $time)
                     .padding()
                     .background(Color.gray.opacity(0.2))
-                    .cornerRadius(10)
+                    .cornerRadius(15)
+                    .padding(.bottom, 10)
                 
-                // **Resim Seçme Butonu**
+                // **Resim Seçme **
+                Text("Medicine Photo")
+                    .font(.body)
+                    .bold()
+                    .foregroundColor(.black.opacity(0.7))
+                
                 Button(action: {
                     isImagePickerPresented.toggle()
                 }) {
@@ -49,42 +79,61 @@ struct AddMedicineView: View {
                             Image(uiImage: selectedImage)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 120, height: 120)
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .cornerRadius(20)
+                                .frame(width: 150, height: 150)
                         } else {
-                            Image(systemName: "photo.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .foregroundColor(.blue)
+                            VStack {
+                                Image(systemName: "photo.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50, height: 50)
+                                    .foregroundStyle(.black.opacity(0.6))
+                                
+                                Text("Select Image")
+                                    .bold()
+                                    .foregroundStyle(.black.opacity(0.6))
+                            }
+                            
                         }
-                        Text("Select Image")
-                            .font(.headline)
+                        
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity, minHeight: 150)
+                    .background(Color.gray.opacity(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
                 }
+
+
+                    // **İlaç Ekle Butonu**
+                HStack {
+                    Spacer()
                 
-                // **İlaç Ekle Butonu**
-                Button(action: {
-                    if !name.isEmpty {
-                        let imageData = selectedImage?.jpegData(compressionQuality: 0.8)
-                        viewModel.addMedicine(name: name, days: days, time: time, imageData: imageData)
-                        dismiss()
+                    Button(action: {
+                        if !name.isEmpty {
+                            let imageData = selectedImage?.jpegData(compressionQuality: 0.8)
+                            viewModel.addMedicine(name: name, days: days, time: time, imageData: imageData)
+                            dismiss()
+                        }
+                    }) {
+                        Text("Save")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .padding()
+                            .frame(width: 150)
+                            .background(Color.black)
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
                     }
-                }) {
-                    Text("Save")
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                }
-                .disabled(name.isEmpty)
+                    .disabled(name.isEmpty)
+                    
+                    Spacer()
+                    
+                } .padding()
+
+
                 
                 Spacer()
             }
             .padding()
-            .navigationTitle("Add Medicine")
             .sheet(isPresented: $isImagePickerPresented) {
                 ImagePicker(image: $selectedImage)
             }
