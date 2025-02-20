@@ -6,79 +6,87 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddMedicineView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: MedicineViewModel
     
-    @State private var name = ""
-    @State private var days = ""
-    @State private var time = Date()
-    @State private var imageName = "pill"
-    
-    let images = ["pill", "syrup", "injection"] // 📌 Örnek resimler
+    @State private var name: String = ""
+    @State private var days: String = ""
+    @State private var time: String = ""
+    @State private var selectedImage: UIImage? // Kullanıcıdan seçilen resim
+    @State private var isImagePickerPresented = false
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section(header: Text("Medicine Details")) {
-                    TextField("Medicine Name", text: $name)
-                    
-                    TextField("Days (e.g. Mon, Wed, Fri)", text: $days)
-                    
-                    DatePicker("Time", selection: $time, displayedComponents: [.hourAndMinute])
-                }
+            VStack(spacing: 20) {
                 
-                Section(header: Text("Select Image")) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(images, id: \.self) { img in
-                                Image(img)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 60, height: 60)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                                    .padding(4)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(imageName == img ? Color.blue : Color.clear, lineWidth: 2)
-                                    )       
-
-                                    .onTapGesture {
-                                        imageName = img
-                                    }
-                            }
+                // **İlaç Adı**
+                TextField("Medicine Name", text: $name)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                
+                // **Günler**
+                TextField("Days (e.g. Mon, Wed, Fri)", text: $days)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                
+                // **Saat**
+                TextField("Time (e.g. 08:30)", text: $time)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
+                
+                // **Resim Seçme Butonu**
+                Button(action: {
+                    isImagePickerPresented.toggle()
+                }) {
+                    VStack {
+                        if let selectedImage = selectedImage {
+                            Image(uiImage: selectedImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 120, height: 120)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                        } else {
+                            Image(systemName: "photo.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(.blue)
                         }
+                        Text("Select Image")
+                            .font(.headline)
                     }
                 }
                 
-                Button("Add Medicine") {
-                    let timeFormatter = DateFormatter()
-                    timeFormatter.timeStyle = .short
-                    let formattedTime = timeFormatter.string(from: time)
-                    
-                    viewModel.addMedicine(
-                        name: name,
-                        days: days,
-                        time: formattedTime,
-                        imageName: imageName
-                    )
-                    dismiss()
-                }
-                .disabled(name.isEmpty || days.isEmpty)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(name.isEmpty || days.isEmpty ? Color.gray : Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-            }
-            .navigationTitle("Add Medicine")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
+                // **İlaç Ekle Butonu**
+                Button(action: {
+                    if !name.isEmpty {
+                        let imageData = selectedImage?.jpegData(compressionQuality: 0.8)
+                        viewModel.addMedicine(name: name, days: days, time: time, imageData: imageData)
                         dismiss()
                     }
+                }) {
+                    Text("Save")
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
                 }
+                .disabled(name.isEmpty)
+                
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Add Medicine")
+            .sheet(isPresented: $isImagePickerPresented) {
+                ImagePicker(image: $selectedImage)
             }
         }
     }

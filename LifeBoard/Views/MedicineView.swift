@@ -71,20 +71,31 @@ struct MedicineCardView: View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading, spacing: 8) {
                 
-                // MARK: Medicine; İmage, Name, Dates
-                HStack {
-                    if let imageName = medicine.imageName {
-                        Image(imageName)
+                HStack(spacing: 20) {
+                    
+                    if let imageData = medicine.imageData, let uiImage = UIImage(data: imageData) {
+                        //  Kullanıcının yüklediği resmi göster
+                        Image(uiImage: uiImage)
                             .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    } else {
+                        //  Eğer resim yüklenmemişse varsayılan "pill" ikonunu göster
+                        Image(systemName: "pills")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 70, height: 70)
+                            .foregroundColor(Color("darkBlue"))
+                            .padding(15)
+                            .background(Color.white.opacity(0.8))
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
+
                     
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Text(medicine.name ?? "Unknown Medicine")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .bold()
                         
                         Text("\(medicine.days ?? "") | \(medicine.time ?? "")")
                             .font(.headline)
@@ -92,9 +103,8 @@ struct MedicineCardView: View {
                     }
                     
                     Spacer()
-                }
+                } .padding(.bottom, 5)
                 
-                // MARK: Taken Button
                 Button(action: {
                     viewModel.toggleTaken(medicine: medicine)
                 }) {
@@ -115,7 +125,6 @@ struct MedicineCardView: View {
             .background(Color("lightBlue").opacity(0.9))
             .cornerRadius(20)
             
-            // MARK: Delete Button 
             Button(action: {
                 viewModel.deleteMedicine(medicine: medicine)
             }) {
