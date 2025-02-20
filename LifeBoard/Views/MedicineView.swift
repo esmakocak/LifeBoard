@@ -19,13 +19,32 @@ struct MedicineView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 15) {
-                    ForEach(viewModel.medicines) { medicine in
-                        MedicineCardView(medicine: medicine, viewModel: viewModel)
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 15) {
+                        if viewModel.medicines.isEmpty {
+                            // 📌 Eğer hiç ilaç yoksa boş mesaj göster
+                            VStack {
+                                Image(systemName: "pills.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(.gray.opacity(0.5))
+                                
+                                Text("No Medicines Added")
+                                    .font(.headline)
+                                    .foregroundColor(.gray.opacity(0.7))
+                                    .padding(.top, 5)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 450) 
+                        } else {
+                            ForEach(viewModel.medicines) { medicine in
+                                MedicineCardView(medicine: medicine, viewModel: viewModel)
+                            }
+                        }
                     }
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle("Medicines")
             .toolbar {
@@ -35,22 +54,25 @@ struct MedicineView: View {
                     }
                 }
             }
-            .overlay(
-                //  **Floating Action Button (FAB)**
-                Button(action: {
-                    isAddingMedicine = true
-                }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 26, weight: .bold))
-                        .frame(width: 60, height: 60)
-                        .background(Color.black)
-                        .foregroundColor(.white)
-                        .clipShape(Circle())
-                        .shadow(radius: 5)
+            .safeAreaInset(edge: .bottom) {
+                // 📌 FAB butonunun sabit kalmasını sağla
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isAddingMedicine = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 26, weight: .bold))
+                            .frame(width: 60, height: 60)
+                            .background(Color.black)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                    .padding(.bottom, 16)
+                    .padding(.trailing, 16)
                 }
-                    .padding(),
-                alignment: .bottomTrailing
-            )
+            }
             .sheet(isPresented: $isAddingMedicine) {
                 AddMedicineView(viewModel: viewModel)
             }

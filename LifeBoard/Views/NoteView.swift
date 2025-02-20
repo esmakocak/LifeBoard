@@ -41,22 +41,40 @@ struct NoteView: View {
                         .padding(.top)
                     
                     ScrollView {
-                        HStack(alignment: .top, spacing: 10) {
-                            // Sol sütun
-                            LazyVStack(spacing: 10) {
-                                ForEach(viewModel.notes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
-                                    noteCard(note: note)
+                        if (viewModel.notes.isEmpty) {
+                            // 📌 Eğer hiç not yoksa boş mesaj göster
+                            VStack {
+                                Image(systemName: "notes.text")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(.gray.opacity(0.5))
+                                
+                                Text("No Notes Added")
+                                    .font(.headline)
+                                    .foregroundColor(.gray.opacity(0.7))
+                                    .padding(.top, 5)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 450)
+                        } else {
+                            HStack(alignment: .top, spacing: 10) {
+                                // Sol sütun
+                                LazyVStack(spacing: 10) {
+                                    ForEach(viewModel.notes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                        noteCard(note: note)
+                                    }
+                                }
+                                
+                                // Sağ sütun
+                                LazyVStack(spacing: 10) {
+                                    ForEach(viewModel.notes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                        noteCard(note: note)
+                                    }
                                 }
                             }
-                            
-                            // Sağ sütun
-                            LazyVStack(spacing: 10) {
-                                ForEach(viewModel.notes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
-                                    noteCard(note: note)
-                                }
-                            }
+                            .padding()
                         }
-                        .padding()
+                        
                     }
                     .navigationTitle("Notes")
                     .onAppear {
