@@ -25,18 +25,11 @@ struct MedicineView: View {
                         if viewModel.medicines.isEmpty {
                             // 📌 Eğer hiç ilaç yoksa boş mesaj göster
                             VStack {
-                                Image(systemName: "pills.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(.gray.opacity(0.5))
-                                
-                                Text("No Medicines Added")
+                                Text("No Medicines Added Yet")
                                     .font(.headline)
                                     .foregroundColor(.gray.opacity(0.7))
-                                    .padding(.top, 5)
                             }
-                            .frame(maxWidth: .infinity, minHeight: 450) 
+                            .frame(maxWidth: .infinity, minHeight: 500)
                         } else {
                             ForEach(viewModel.medicines) { medicine in
                                 MedicineCardView(medicine: medicine, viewModel: viewModel)
