@@ -41,10 +41,9 @@ struct NoteView: View {
                         .padding(.top)
                     
                     ScrollView {
-                        if (viewModel.notes.isEmpty) {
-                            // 📌 Eğer hiç not yoksa boş mesaj göster
+                        if filteredNotes.isEmpty {
                             VStack {
-                                Text("No Notes Added Yet")
+                                Text("No Notes Found")
                                     .font(.headline)
                                     .foregroundColor(.gray.opacity(0.7))
                             }
@@ -53,21 +52,20 @@ struct NoteView: View {
                             HStack(alignment: .top, spacing: 10) {
                                 // Sol sütun
                                 LazyVStack(spacing: 10) {
-                                    ForEach(viewModel.notes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                    ForEach(filteredNotes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
                                         noteCard(note: note)
                                     }
                                 }
                                 
                                 // Sağ sütun
                                 LazyVStack(spacing: 10) {
-                                    ForEach(viewModel.notes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
+                                    ForEach(filteredNotes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
                                         noteCard(note: note)
                                     }
                                 }
                             }
                             .padding()
                         }
-                        
                     }
                     .navigationTitle("Notes")
                     .onAppear {
