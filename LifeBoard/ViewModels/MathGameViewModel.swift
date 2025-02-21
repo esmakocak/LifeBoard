@@ -19,14 +19,18 @@ class MathGameViewModel: ObservableObject {
     
     @Published var selectedAnswer: Int? = nil
     @Published var isCorrectAnswerSelected: Bool? = nil
+    @Published var isAnswerSelected: Bool = false
     
     init() {
         generateAnswers()
     }
     
     func answerIsCorrect(answer: Int) {
+        guard !isAnswerSelected else { return }
+        
         selectedAnswer = answer
         isCorrectAnswerSelected = (answer == correctAnswer)
+        isAnswerSelected = true
 
         if isCorrectAnswerSelected == true {
             score += 1
@@ -44,6 +48,7 @@ class MathGameViewModel: ObservableObject {
                 self.generateAnswers()
                 self.selectedAnswer = nil
                 self.isCorrectAnswerSelected = nil
+                self.isAnswerSelected = false // Yeni soru geldiğinde tekrar butonları aktif et
             }
         }
     }
@@ -73,6 +78,7 @@ class MathGameViewModel: ObservableObject {
             self.gameOver = false
             self.selectedAnswer = nil
             self.isCorrectAnswerSelected = nil
+            self.isAnswerSelected = false 
             self.generateAnswers()
         }
     }

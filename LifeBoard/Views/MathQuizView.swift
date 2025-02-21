@@ -60,6 +60,7 @@ struct MathQuizView: View {
                                 isCorrectAnswerSelected: viewModel.isCorrectAnswerSelected
                             )
                         }
+                        .disabled(viewModel.isAnswerSelected) // Kullanıcı cevap verdiyse butonlar devre dışı
                     }
                 }
                 .padding()
