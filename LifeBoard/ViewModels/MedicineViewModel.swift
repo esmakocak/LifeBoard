@@ -8,16 +8,20 @@
 import Foundation
 import CoreData
 import UIKit
+import SwiftUI
 
 class MedicineViewModel: ObservableObject {
     @Published var medicines: [Medicine] = []
+    @AppStorage("lastCheckedDate") private var lastCheckedDate: Double = 0
+
     let weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     
     private let viewContext: NSManagedObjectContext
     
     init(context: NSManagedObjectContext) {
         self.viewContext = context
-        fetchMedicines()
+        fetchMedicines() // 📌 Önce ilaçları getir
+        checkAndResetTakenStatus() // ✅ Sonra sıfırlama kontrolünü yap
     }
     
     // **Tüm ilaçları getir**
@@ -107,4 +111,29 @@ class MedicineViewModel: ObservableObject {
             print("Error saving Core Data: \(error.localizedDescription)")
         }
     }
+    
+    // **Yeni gün başladı mı kontrol et ve ilaçları sıfırla**
+    func checkAndResetTakenStatus() {
+        let calendar = Calendar.current
+        let lastChecked = lastCheckedDate == 0 ? Date.distantPast : Date(timeIntervalSince1970: lastCheckedDate)
+        
+        if !calendar.isDate(lastChecked, inSameDayAs: Date()) {
+            resetAllMedicineTakenStatus()
+            lastCheckedDate = Date().timeIntervalSince1970
+        } else {
+            print("⏳ No reset needed, same day.")
+        }
+    }
+    
+
+    
+    // **Tüm ilaçların `isTaken` değerini sıfırla**
+    private func resetAllMedicineTakenStatus() {
+        for medicine in medicines {
+            medicine.isTaken = false
+        }
+        saveContext()
+    }
+
+    
 }

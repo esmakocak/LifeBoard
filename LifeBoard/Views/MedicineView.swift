@@ -14,6 +14,9 @@ struct MedicineView: View {
     @State private var isAddingMedicine = false // Sheet açma kontrolü
     @State private var isShowingAlert = false // Custom alert kontrolü
     @State private var alertMessage = "" // Alert içeriği
+    @Environment(\.scenePhase) private var scenePhase // ✅ Uygulamanın aktif olup olmadığını kontrol etmek için
+
+
 
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: MedicineViewModel(context: context))
@@ -74,10 +77,18 @@ struct MedicineView: View {
                 .padding(.top)
             }
             .navigationTitle("Medicines")
+            .onAppear {
+                viewModel.checkAndResetTakenStatus()
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    viewModel.checkAndResetTakenStatus()
+                }
+            }
             .safeAreaInset(edge: .bottom) {
-                    // 📌 FAB Butonu (Geri Eklendi)
-                    HStack {
-                        Spacer()
+                // 📌 FAB Butonu (Geri Eklendi)
+                HStack {
+                    Spacer()
                         Button(action: {
                             isAddingMedicine = true
                         }) {
