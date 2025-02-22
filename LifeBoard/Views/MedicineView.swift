@@ -150,6 +150,8 @@ struct MedicineCardView: View {
                         Text("\(viewModel.getDaysFromBitmask(medicine.daysBitmask).joined(separator: ", ")) | \(medicine.time ?? "")")
                             .font(.headline)
                             .foregroundColor(.black.opacity(0.7))
+                            .lineLimit(nil)
+                            .fixedSize(horizontal: false, vertical: true)
                         
                     }
                     

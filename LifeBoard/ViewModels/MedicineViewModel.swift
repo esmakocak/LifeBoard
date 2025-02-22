@@ -50,10 +50,19 @@ class MedicineViewModel: ObservableObject {
         saveContext()
     }
     
+//    func getDaysFromBitmask(_ bitmask: Int16) -> [String] {
+//        return weekDays.enumerated().compactMap { index, day in
+//            (bitmask & (1 << index)) != 0 ? day : nil
+//        }
+//    }
+
     func getDaysFromBitmask(_ bitmask: Int16) -> [String] {
-        return weekDays.enumerated().compactMap { index, day in
+        let selectedDays = weekDays.enumerated().compactMap { index, day in
             (bitmask & (1 << index)) != 0 ? day : nil
         }
+        
+        // Eğer tüm günler seçildiyse, sadece "Everyday" döndür
+        return selectedDays.count == weekDays.count ? ["Everyday"] : selectedDays
     }
     
     func getMedicinesForToday() -> [Medicine] {

@@ -43,19 +43,6 @@ struct AddMedicineView: View {
                         .cornerRadius(15)
                         .padding(.bottom, 10)
                     
-                    // **Saat**
-                    Text("Time")
-                        .font(.body)
-                        .bold()
-                        .foregroundColor(.black.opacity(0.7))
-                    
-                    TextField("Time (e.g. 08:30)", text: $time)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(15)
-                        .padding(.bottom, 10)
-                    
-
                     
                     Text("Frequency")
                         .font(.body)
@@ -63,6 +50,19 @@ struct AddMedicineView: View {
                         .foregroundColor(.black.opacity(0.7))
                     
                     DaySelectionView(selectedDays: $selectedDays).padding(.bottom, 10)
+                    
+                    
+                    // **Saat**
+                    Text("Note")
+                        .font(.body)
+                        .bold()
+                        .foregroundColor(.black.opacity(0.7))
+                    
+                    TextField("Twice a day, nights, at 08:30 etc..", text: $time)
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(15)
+                        .padding(.bottom, 10)
                     
                     // **Resim Seçme **
                     Text("Medicine Photo")
@@ -147,8 +147,10 @@ struct DaySelectionView: View {
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     @Binding var selectedDays: [String]
 
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 7) // 📌 7 sütun
+
     var body: some View {
-        HStack(spacing: 15) { // Butonlar arasında boşluk ekleyelim
+        LazyVGrid(columns: columns, spacing: 15) { // 📌 7 eşit sütun
             ForEach(days, id: \.self) { day in
                 Button(action: {
                     if selectedDays.contains(day) {
@@ -158,12 +160,11 @@ struct DaySelectionView: View {
                     }
                 }) {
                     Text(day.prefix(3)) // "Mon", "Tue" gibi göster
-                        .font(.system(size: 14, weight: .bold, design: .rounded)) // Sabit genişlik
-                        .frame(minWidth: 40) // Butonun minimum genişliğini ayarla
-                        .frame(height: 40) // Yüksekliği ayarla
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .frame(width: 40, height: 40) 
                         .background(selectedDays.contains(day) ? Color("darkPurple") : Color.gray.opacity(0.2))
                         .foregroundColor(selectedDays.contains(day) ? .white : .black.opacity(0.7))
-                        .clipShape(Circle()) // Daire buton
+                        .clipShape(Circle()) // 📌 Daire buton
                 }
             }
         }
