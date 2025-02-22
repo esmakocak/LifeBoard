@@ -12,7 +12,7 @@ struct RootView: View {
 
     var body: some View {
         if hasSeenWelcomeScreen {
-            ContentView() 
+            ContentView()
         } else {
             WelcomeView()
         }

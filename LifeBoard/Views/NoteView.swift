@@ -129,7 +129,7 @@ struct NoteView: View {
             .padding(5)
             .frame(maxWidth: .infinity)
             .frame(height: CGFloat.random(in: 200...330))
-            .background(Color.fromHex(note.colorHex ?? "#FFFF00"))
+            .background(Color.fromHex(note.colorHex ?? "#FFC8DD"))
             .cornerRadius(15)
             .onTapGesture {
                 selectedNote = note

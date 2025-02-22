@@ -12,7 +12,9 @@ struct MedicineView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var viewModel: MedicineViewModel
     @State private var isAddingMedicine = false // Sheet açma kontrolü
-    
+    @State private var isShowingAlert = false // Custom alert kontrolü
+    @State private var alertMessage = "" // Alert içeriği
+
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: MedicineViewModel(context: context))
     }
@@ -20,24 +22,56 @@ struct MedicineView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                ScrollView {
-                    VStack(spacing: 15) {
-                        if viewModel.medicines.isEmpty {
-                            // 📌 Eğer hiç ilaç yoksa boş mesaj göster
-                            VStack {
-                                Text("No Medicines Added Yet")
-                                    .font(.headline)
-                                    .foregroundColor(.gray.opacity(0.7))
-                            }
-                            .frame(maxWidth: .infinity, minHeight: 500)
+                
+                VStack {
+                    
+                    // 📌 "What Should I Take Today?" Butonu
+                    Button(action: {
+                        let todayMedicines = viewModel.getMedicinesForToday()
+                        if todayMedicines.isEmpty {
+                            alertMessage = "You have no medicines to take today."
                         } else {
-                            ForEach(viewModel.medicines) { medicine in
-                                MedicineCardView(medicine: medicine, viewModel: viewModel)
+                            let medicineNames = todayMedicines.map { $0.name ?? "Unknown" }.joined(separator: ", ")
+                            alertMessage = "Today you should take: \(medicineNames)"
+                        }
+                        isShowingAlert = true
+                    }) {
+                        Text("What should I take today?")
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color("lightBlue"))
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    }
+                    .padding(.horizontal)
+                    .alert("Today's Medicines", isPresented: $isShowingAlert) {
+                        Button("OK", role: .cancel) { }
+                    } message: {
+                        Text(alertMessage)
+                    }
+                    
+                    ScrollView {
+                        
+                        
+                        VStack(spacing: 15) {
+                            if viewModel.medicines.isEmpty {
+                                VStack {
+                                    Text("No Medicines Added Yet")
+                                        .font(.headline)
+                                        .foregroundColor(.gray.opacity(0.7))
+                                }
+                                .frame(maxWidth: .infinity, minHeight: 500)
+                            } else {
+                                ForEach(viewModel.medicines) { medicine in
+                                    MedicineCardView(medicine: medicine, viewModel: viewModel)
+                                }
                             }
                         }
+                        .padding()
                     }
-                    .padding()
                 }
+                .padding(.top)
             }
             .navigationTitle("Medicines")
             .toolbar {
@@ -48,27 +82,28 @@ struct MedicineView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                // 📌 FAB butonunun sabit kalmasını sağla
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        isAddingMedicine = true
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 26, weight: .bold))
-                            .frame(width: 60, height: 60)
-                            .background(Color.black)
-                            .foregroundColor(.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 5)
+                    // 📌 FAB Butonu (Geri Eklendi)
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            isAddingMedicine = true
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 26, weight: .bold))
+                                .frame(width: 60, height: 60)
+                                .background(Color.black)
+                                .foregroundColor(.white)
+                                .clipShape(Circle())
+                                .shadow(radius: 5)
+                        }
+                        .padding(.bottom, 16)
+                        .padding(.trailing, 16)
                     }
-                    .padding(.bottom, 16)
-                    .padding(.trailing, 16)
                 }
             }
             .sheet(isPresented: $isAddingMedicine) {
                 AddMedicineView(viewModel: viewModel)
-            }
+            
         }
     }
 }
@@ -112,9 +147,10 @@ struct MedicineCardView: View {
                         Text(medicine.name ?? "Unknown Medicine")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
                         
-                        Text("\(medicine.days ?? "") | \(medicine.time ?? "")")
+                        Text("\(viewModel.getDaysFromBitmask(medicine.daysBitmask).joined(separator: ", ")) | \(medicine.time ?? "")")
                             .font(.headline)
                             .foregroundColor(.black.opacity(0.7))
+                        
                     }
                     
                     Spacer()
@@ -152,3 +188,7 @@ struct MedicineCardView: View {
         }
     }
 }
+
+
+
+

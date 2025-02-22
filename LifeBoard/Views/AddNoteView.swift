@@ -21,7 +21,7 @@ struct AddNoteView: View {
 
         _newNote = State(initialValue: noteToEdit?.text ?? "")
         _newSubtext = State(initialValue: noteToEdit?.subtext ?? "")
-        _selectedColor = State(initialValue: Color.fromHex(noteToEdit?.colorHex ?? "#FFFF00"))
+        _selectedColor = State(initialValue: Color.fromHex(noteToEdit?.colorHex ?? "FFC8DD"))
         _isReminderOn = State(initialValue: noteToEdit?.reminderDate != nil)
         _reminderDate = State(initialValue: noteToEdit?.reminderDate ?? Date())
     }

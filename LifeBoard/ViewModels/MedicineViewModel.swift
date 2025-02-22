@@ -11,6 +11,7 @@ import UIKit
 
 class MedicineViewModel: ObservableObject {
     @Published var medicines: [Medicine] = []
+    let weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     
     private let viewContext: NSManagedObjectContext
     
@@ -22,6 +23,11 @@ class MedicineViewModel: ObservableObject {
     // **Tüm ilaçları getir**
     func fetchMedicines() {
         let request: NSFetchRequest<Medicine> = Medicine.fetchRequest()
+        
+        // Sıralama: Eklenme zamanı en yeni olan en üstte olsun
+        let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
+        request.sortDescriptors = [sortDescriptor]
+        
         do {
             medicines = try viewContext.fetch(request)
         } catch {
@@ -30,15 +36,29 @@ class MedicineViewModel: ObservableObject {
     }
     
     // **Yeni ilaç ekle**
-    func addMedicine(name: String, days: String, time: String, imageData: Data?) {
+    func addMedicine(name: String, selectedDays: [String], time: String, imageData: Data?) {
         let newMedicine = Medicine(context: viewContext)
         newMedicine.id = UUID()
         newMedicine.name = name
-        newMedicine.days = days
+        newMedicine.daysBitmask = selectedDays.reduce(0) { bitmask, day in
+            guard let index = weekDays.firstIndex(of: day) else { return bitmask }
+            return bitmask | (1 << index)
+        }
         newMedicine.time = time
-        newMedicine.imageData = imageData // 📌 Resmi CoreData'ya kaydet
+        newMedicine.imageData = imageData
         newMedicine.isTaken = false
         saveContext()
+    }
+    
+    func getDaysFromBitmask(_ bitmask: Int16) -> [String] {
+        return weekDays.enumerated().compactMap { index, day in
+            (bitmask & (1 << index)) != 0 ? day : nil
+        }
+    }
+    
+    func getMedicinesForToday() -> [Medicine] {
+        let todayIndex = Calendar.current.component(.weekday, from: Date()) - 1
+        return medicines.filter { $0.daysBitmask & (1 << todayIndex) != 0 }
     }
     
     // **İlaç sil**
@@ -56,14 +76,14 @@ class MedicineViewModel: ObservableObject {
     // **Mock Data Ekle**
     func addMockData() {
         let mockMedicines = [
-            ("Aspirin", "Mon, Wed, Fri", "08:00", UIImage(named: "aspirin")),
-            ("Paracetamol", "Tue, Thu", "14:30", UIImage(named: "paracetamol")),
-            ("Ibuprofen", "Sat, Sun", "20:00", UIImage(named: "ibuprofen"))
+            ("Aspirin", ["Mon", "Wed", "Fri"], "08:00", UIImage(named: "aspirin")),
+            ("Paracetamol", ["Tue", "Thu"], "14:30", UIImage(named: "paracetamol")),
+            ("Ibuprofen", ["Sat", "Sun"], "20:00", UIImage(named: "ibuprofen"))
         ]
         
         for (name, days, time, image) in mockMedicines {
-            let imageData = image?.jpegData(compressionQuality: 0.8) //  Resmi Data'ya çevir
-            addMedicine(name: name, days: days, time: time, imageData: imageData)
+            let imageData = image?.jpegData(compressionQuality: 0.8) // Resmi Data'ya çevir
+            addMedicine(name: name, selectedDays: days, time: time, imageData: imageData)
         }
     }
     

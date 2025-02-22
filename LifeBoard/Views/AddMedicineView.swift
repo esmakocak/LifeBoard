@@ -18,6 +18,9 @@ struct AddMedicineView: View {
     @State private var selectedImage: UIImage? // Kullanıcıdan seçilen resim
     @State private var isImagePickerPresented = false
     
+    @State private var selectedDays: [String] = []
+
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -40,19 +43,6 @@ struct AddMedicineView: View {
                         .cornerRadius(15)
                         .padding(.bottom, 10)
                     
-                    // **Günler**
-                    Text("Date")
-                        .font(.body)
-                        .bold()
-                        .foregroundColor(.black.opacity(0.7))
-                    
-                    TextField("Days (e.g. Mon, Wed, Fri)", text: $days)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(15)
-                        .padding(.bottom, 10)
-                    
-                    
                     // **Saat**
                     Text("Time")
                         .font(.body)
@@ -64,6 +54,15 @@ struct AddMedicineView: View {
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(15)
                         .padding(.bottom, 10)
+                    
+
+                    
+                    Text("Frequency")
+                        .font(.body)
+                        .bold()
+                        .foregroundColor(.black.opacity(0.7))
+                    
+                    DaySelectionView(selectedDays: $selectedDays).padding(.bottom, 10)
                     
                     // **Resim Seçme **
                     Text("Medicine Photo")
@@ -109,9 +108,9 @@ struct AddMedicineView: View {
                         Spacer()
                         
                         Button(action: {
-                            if !name.isEmpty {
+                            if !name.isEmpty && !selectedDays.isEmpty {
                                 let imageData = selectedImage?.jpegData(compressionQuality: 0.8)
-                                viewModel.addMedicine(name: name, days: days, time: time, imageData: imageData)
+                                viewModel.addMedicine(name: name, selectedDays: selectedDays, time: time, imageData: imageData)
                                 dismiss()
                             }
                         }) {
@@ -119,15 +118,15 @@ struct AddMedicineView: View {
                                 .font(.system(size: 15, weight: .bold, design: .rounded))
                                 .padding()
                                 .frame(width: 150)
-                                .background(Color.black)
+                                .background((!name.isEmpty && !selectedDays.isEmpty) ? Color.black : Color.black.opacity(0.7) )
                                 .foregroundColor(.white)
                                 .cornerRadius(20)
                         }
-                        .disabled(name.isEmpty)
+                        .disabled(name.isEmpty || selectedDays.isEmpty) // Kullanıcı ilaç ismi ve günleri seçmedikçe buton devre dışı
                         
                         Spacer()
-                        
-                    } .padding()
+                    }
+                    .padding()
                     
                     
                     
@@ -138,6 +137,34 @@ struct AddMedicineView: View {
                     ImagePicker(image: $selectedImage)
                 }
                 
+            }
+        }
+    }
+}
+
+
+struct DaySelectionView: View {
+    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    @Binding var selectedDays: [String]
+
+    var body: some View {
+        HStack(spacing: 15) { // Butonlar arasında boşluk ekleyelim
+            ForEach(days, id: \.self) { day in
+                Button(action: {
+                    if selectedDays.contains(day) {
+                        selectedDays.removeAll { $0 == day }
+                    } else {
+                        selectedDays.append(day)
+                    }
+                }) {
+                    Text(day.prefix(3)) // "Mon", "Tue" gibi göster
+                        .font(.system(size: 14, weight: .bold, design: .rounded)) // Sabit genişlik
+                        .frame(minWidth: 40) // Butonun minimum genişliğini ayarla
+                        .frame(height: 40) // Yüksekliği ayarla
+                        .background(selectedDays.contains(day) ? Color("darkPurple") : Color.gray.opacity(0.2))
+                        .foregroundColor(selectedDays.contains(day) ? .white : .black.opacity(0.7))
+                        .clipShape(Circle()) // Daire buton
+                }
             }
         }
     }
