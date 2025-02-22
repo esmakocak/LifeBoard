@@ -117,6 +117,8 @@ struct MedicineCardView: View {
     let medicine: Medicine
     @ObservedObject var viewModel: MedicineViewModel
     
+    @State private var isImageFullScreen = false // 📌 Resmi büyütmek için state
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading, spacing: 8) {
@@ -124,14 +126,17 @@ struct MedicineCardView: View {
                 HStack(spacing: 20) {
                     
                     if let imageData = medicine.imageData, let uiImage = UIImage(data: imageData) {
-                        //  Kullanıcının yüklediği resmi göster
+                        // 📌 Resme tıklanınca büyütecek şekilde ayarla
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
                             .frame(width: 100, height: 100)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
+                            .onTapGesture {
+                                isImageFullScreen = true
+                            }
                     } else {
-                        //  Eğer resim yüklenmemişse varsayılan "pill" ikonunu göster
+                        // 📌 Eğer resim yüklenmemişse varsayılan ikon göster
                         Image(systemName: "pills")
                             .resizable()
                             .scaledToFill()
@@ -142,7 +147,6 @@ struct MedicineCardView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
 
-                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text(medicine.name ?? "Unknown Medicine")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -153,10 +157,12 @@ struct MedicineCardView: View {
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
                         
+                        
                     }
                     
                     Spacer()
-                } .padding(.bottom, 5)
+                }
+                .padding(.bottom, 5)
                 
                 Button(action: {
                     viewModel.toggleTaken(medicine: medicine)
@@ -188,9 +194,39 @@ struct MedicineCardView: View {
             }
             .padding(10)
         }
+        
+        // 📌 **Tam ekran resim gösterme**
+        .fullScreenCover(isPresented: $isImageFullScreen) {
+            if let imageData = medicine.imageData, let uiImage = UIImage(data: imageData) {
+                ZStack {
+                    Color.black.opacity(0.9).ignoresSafeArea() // Arkaplanı siyah yap
+
+                    VStack {
+                        Spacer()
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .padding()
+                        Spacer()
+                    }
+                    
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                isImageFullScreen = false
+                            }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.white)
+                                    .padding()
+                            }
+                        }
+                        Spacer()
+                    }
+                }
+            }
+        }
     }
 }
-
-
-
-
