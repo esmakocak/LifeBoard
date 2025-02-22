@@ -74,13 +74,6 @@ struct MedicineView: View {
                 .padding(.top)
             }
             .navigationTitle("Medicines")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Mock Data Ekle") {
-                        viewModel.addMockData()
-                    }
-                }
-            }
             .safeAreaInset(edge: .bottom) {
                     // 📌 FAB Butonu (Geri Eklendi)
                     HStack {
@@ -199,7 +192,7 @@ struct MedicineCardView: View {
         .fullScreenCover(isPresented: $isImageFullScreen) {
             if let imageData = medicine.imageData, let uiImage = UIImage(data: imageData) {
                 ZStack {
-                    Color.black.opacity(0.9).ignoresSafeArea() // Arkaplanı siyah yap
+                    Color.black.opacity(0.7).ignoresSafeArea()
 
                     VStack {
                         Spacer()

@@ -24,10 +24,10 @@ class MedicineViewModel: ObservableObject {
     func fetchMedicines() {
         let request: NSFetchRequest<Medicine> = Medicine.fetchRequest()
         
-        // Sıralama: Eklenme zamanı en yeni olan en üstte olsun
-        let sortDescriptor = NSSortDescriptor(key: "id", ascending: false)
+        //  En son eklenen en üstte olacak şekilde sıralama ekle
+        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: false)
         request.sortDescriptors = [sortDescriptor]
-        
+
         do {
             medicines = try viewContext.fetch(request)
         } catch {
@@ -35,7 +35,7 @@ class MedicineViewModel: ObservableObject {
         }
     }
     
-    // **Yeni ilaç ekle**
+    
     func addMedicine(name: String, selectedDays: [String], time: String, imageData: Data?) {
         let newMedicine = Medicine(context: viewContext)
         newMedicine.id = UUID()
@@ -47,8 +47,10 @@ class MedicineViewModel: ObservableObject {
         newMedicine.time = time
         newMedicine.imageData = imageData
         newMedicine.isTaken = false
+        newMedicine.creationDate = Date()
         saveContext()
     }
+    
     
 //    func getDaysFromBitmask(_ bitmask: Int16) -> [String] {
 //        return weekDays.enumerated().compactMap { index, day in
