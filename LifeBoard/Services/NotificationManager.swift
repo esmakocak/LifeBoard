@@ -54,16 +54,13 @@ class NotificationManager: ObservableObject {
         let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("error scheduling notification: \(error.localizedDescription)")
-            } else {
-                print("notification successfully scheduled, Date: \(date)")
+            if error != nil {
+                // Handle the error (e.g., log it or show an alert)
             }
         }
     }
     
     func removeNotification(identifier: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [identifier])
-        print("Notification deleted: \(identifier)")
     }
 }

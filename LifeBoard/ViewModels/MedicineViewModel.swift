@@ -34,7 +34,7 @@ class MedicineViewModel: ObservableObject {
         do {
             medicines = try viewContext.fetch(request)
         } catch {
-            print("Error fetching medicines: \(error.localizedDescription)")
+            assertionFailure("Error fetching medicines: \(error.localizedDescription)")
         }
     }
     
@@ -85,7 +85,7 @@ class MedicineViewModel: ObservableObject {
             try viewContext.save()
             fetchMedicines()
         } catch {
-            print("Error saving Core Data: \(error.localizedDescription)")
+            assertionFailure("Error saving Core Data: \(error.localizedDescription)")
         }
     }
     

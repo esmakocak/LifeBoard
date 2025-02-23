@@ -41,7 +41,7 @@ class NoteViewModel: ObservableObject {
         do {
             notes = try context.fetch(request)
         } catch {
-            print("Notları çekerken hata oluştu: \(error.localizedDescription)")
+            assertionFailure("Notları çekerken hata oluştu: \(error.localizedDescription)")
         }
     }
     
@@ -66,7 +66,7 @@ class NoteViewModel: ObservableObject {
         do {
             try context.save()
         } catch {
-            print("Kaydetme hatası: \(error.localizedDescription)")
+            assertionFailure("Kaydetme hatası: \(error.localizedDescription)")
         }
     }
 }
