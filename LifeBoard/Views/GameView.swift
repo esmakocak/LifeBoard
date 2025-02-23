@@ -15,7 +15,7 @@ struct GameView: View {
         NavigationStack {
             VStack(spacing: 20) {
                 
-                // 📌 MEMORY CARDS BUTTON
+                // MARK: MEMORY CARDS BUTTON
                 Button {
                     isGame1Presented.toggle()
                 } label: {
@@ -24,23 +24,21 @@ struct GameView: View {
                         .frame(maxWidth: .infinity, maxHeight: 150)
                         .overlay(
                             ZStack {
-                                // 🔹 Sol üst köşeye kart destesi ikonu
+                                
                                 Image(systemName: "square.stack.3d.down.forward")
                                     .resizable()
                                     .scaledToFit()
                                     .foregroundColor(Color("darkPink").opacity(0.5))
                                     .frame(width: 55, height: 55)
                                     .offset(x: -135, y: 30)
-
-                                // 🔹 Sağ üst köşeye sparkles efekti
+                                
                                 Image(systemName: "sparkles")
                                     .resizable()
                                     .scaledToFit()
                                     .foregroundColor(Color("darkPink").opacity(0.5))
                                     .frame(width: 45, height: 45)
                                     .offset(x: 135, y: -30)
-
-                                // 🔹 Butonun merkezindeki metin
+                                
                                 Text("Memory Cards")
                                     .font(.system(size: 26, weight: .bold, design: .rounded))
                                     .foregroundColor(.black)
@@ -50,8 +48,8 @@ struct GameView: View {
                 .fullScreenCover(isPresented: $isGame1Presented) {
                     MemoryCardsView()
                 }
-
-                // 📌 MATH QUIZ BUTTON
+                
+                // MARK: MATH QUIZ BUTTON
                 Button {
                     isGame2Presented.toggle()
                 } label: {
@@ -92,8 +90,7 @@ struct GameView: View {
                                     .foregroundColor(Color("darkPurple").opacity(0.5))
                                     .frame(width: 40, height: 40)
                                     .offset(x: 120, y: 30)
-
-                                // 🔹 Butonun merkezindeki metin
+                                
                                 Text("Math Quiz")
                                     .font(.system(size: 26, weight: .bold, design: .rounded))
                                     .foregroundColor(.black)

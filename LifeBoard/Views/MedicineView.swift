@@ -11,13 +11,11 @@ struct MedicineView: View {
     
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var viewModel: MedicineViewModel
-    @State private var isAddingMedicine = false // Sheet açma kontrolü
-    @State private var isShowingAlert = false // Custom alert kontrolü
-    @State private var alertMessage = "" // Alert içeriği
-    @Environment(\.scenePhase) private var scenePhase // ✅ Uygulamanın aktif olup olmadığını kontrol etmek için
-
-
-
+    @State private var isAddingMedicine = false
+    @State private var isShowingAlert = false
+    @State private var alertMessage = ""
+    @Environment(\.scenePhase) private var scenePhase
+    
     init(context: NSManagedObjectContext) {
         _viewModel = StateObject(wrappedValue: MedicineViewModel(context: context))
     }
@@ -28,7 +26,7 @@ struct MedicineView: View {
                 
                 VStack {
                     
-                    // 📌 "What Should I Take Today?" Butonu
+                    // MARK: Daily Medicines Button
                     Button(action: {
                         let todayMedicines = viewModel.getMedicinesForToday()
                         if todayMedicines.isEmpty {
@@ -55,7 +53,6 @@ struct MedicineView: View {
                     }
                     
                     ScrollView {
-                        
                         
                         VStack(spacing: 15) {
                             if viewModel.medicines.isEmpty {
@@ -86,28 +83,27 @@ struct MedicineView: View {
                 }
             }
             .safeAreaInset(edge: .bottom) {
-                // 📌 FAB Butonu (Geri Eklendi)
+                // MARK: Add Button
                 HStack {
                     Spacer()
-                        Button(action: {
-                            isAddingMedicine = true
-                        }) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 26, weight: .bold))
-                                .frame(width: 60, height: 60)
-                                .background(Color.black)
-                                .foregroundColor(.white)
-                                .clipShape(Circle())
-                                .shadow(radius: 5)
-                        }
-                        .padding(.bottom, 16)
-                        .padding(.trailing, 16)
+                    Button(action: {
+                        isAddingMedicine = true
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 26, weight: .bold))
+                            .frame(width: 60, height: 60)
+                            .background(Color.black)
+                            .foregroundColor(.white)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
                     }
+                    .padding(.bottom, 16)
+                    .padding(.trailing, 16)
                 }
             }
-            .sheet(isPresented: $isAddingMedicine) {
-                AddMedicineView(viewModel: viewModel)
-            
+        }
+        .sheet(isPresented: $isAddingMedicine) {
+            AddMedicineView(viewModel: viewModel)
         }
     }
 }
@@ -116,13 +112,13 @@ struct MedicineView: View {
     MedicineView(context: PersistenceController.shared.context)
 }
 
-
+// MARK: Medicine Card
 struct MedicineCardView: View {
     let medicine: Medicine
     @ObservedObject var viewModel: MedicineViewModel
     
-    @State private var isImageFullScreen = false // 📌 Resmi büyütmek için state
-
+    @State private var isImageFullScreen = false // For open image full screen
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading, spacing: 8) {
@@ -130,7 +126,7 @@ struct MedicineCardView: View {
                 HStack(spacing: 20) {
                     
                     if let imageData = medicine.imageData, let uiImage = UIImage(data: imageData) {
-                        // 📌 Resme tıklanınca büyütecek şekilde ayarla
+                        
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()
@@ -140,7 +136,7 @@ struct MedicineCardView: View {
                                 isImageFullScreen = true
                             }
                     } else {
-                        // 📌 Eğer resim yüklenmemişse varsayılan ikon göster
+                        
                         Image(systemName: "pills")
                             .resizable()
                             .scaledToFill()
@@ -150,7 +146,7 @@ struct MedicineCardView: View {
                             .background(Color.white.opacity(0.8))
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
-
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text(medicine.name ?? "Unknown Medicine")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
@@ -160,8 +156,6 @@ struct MedicineCardView: View {
                             .foregroundColor(.black.opacity(0.7))
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
-                        
-                        
                     }
                     
                     Spacer()
@@ -198,13 +192,11 @@ struct MedicineCardView: View {
             }
             .padding(10)
         }
-        
-        // 📌 **Tam ekran resim gösterme**
         .fullScreenCover(isPresented: $isImageFullScreen) {
             if let imageData = medicine.imageData, let uiImage = UIImage(data: imageData) {
                 ZStack {
                     Color.black.opacity(0.7).ignoresSafeArea()
-
+                    
                     VStack {
                         Spacer()
                         Image(uiImage: uiImage)

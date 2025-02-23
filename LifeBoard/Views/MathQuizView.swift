@@ -33,20 +33,19 @@ struct MathQuizView: View {
                     Spacer()
                 }
                 
-                // Başlık
+                // MARK: Title
                 Text("Math Quiz")
                     .font(.title)
                     .foregroundStyle(.black)
                     .bold()
                     .padding(.top, 20)
-
-                // Soru ve cevap seçenekleri
+                
+                // Question & answers
                 Text("\(viewModel.firstNumber) + \(viewModel.secondNumber)")
                     .font(.largeTitle)
                     .foregroundStyle(.black)
                     .bold()
                     .padding(.top, 20)
-
                 
                 LazyVGrid(columns: columns, spacing: 20) {
                     ForEach(viewModel.choiceArray, id: \.self) { number in
@@ -60,12 +59,12 @@ struct MathQuizView: View {
                                 isCorrectAnswerSelected: viewModel.isCorrectAnswerSelected
                             )
                         }
-                        .disabled(viewModel.isAnswerSelected) // Kullanıcı cevap verdiyse butonlar devre dışı
+                        .disabled(viewModel.isAnswerSelected) // Disable if user answered already
                     }
                 }
                 .padding()
                 
-                // Skor göstergesi
+                // MARK: Skor göstergesi
                 Text("Score: \(viewModel.score)")
                     .font(.headline)
                     .foregroundStyle(.black)
@@ -74,7 +73,7 @@ struct MathQuizView: View {
                 Spacer()
             }
             
-            // Oyun bittiğinde
+            // MARK: End of the Game
             if viewModel.gameOver {
                 VStack {
                     Spacer()
@@ -84,7 +83,7 @@ struct MathQuizView: View {
                             .fontWeight(.semibold)
                             .foregroundColor(.black)
                             .padding(.bottom)
-
+                        
                         Button(action: viewModel.resetGame) {
                             Text("Play Again")
                                 .padding()
@@ -93,7 +92,6 @@ struct MathQuizView: View {
                                 .background(Color.black)
                                 .foregroundColor(.white)
                                 .cornerRadius(20)
-                            
                         }
                     }
                     .padding()
@@ -105,12 +103,13 @@ struct MathQuizView: View {
     }
 }
 
+// MARK: Answer Button
 struct AnswerButton: View {
     var number: Int
     var selectedAnswer: Int?
     var correctAnswer: Int
     var isCorrectAnswerSelected: Bool?
-
+    
     var body: some View {
         Text("\(number)")
             .frame(width: 110, height: 110)
@@ -120,7 +119,7 @@ struct AnswerButton: View {
             .clipShape(Circle())
             .padding()
     }
-
+    
     private var buttonColor: Color {
         if let selected = selectedAnswer {
             if selected == number {

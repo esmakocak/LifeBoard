@@ -1,3 +1,10 @@
+//
+//  AddMedicineView.swift
+//  LifeBoard
+//
+//  Created by Esma Koçak on 19.02.2025.
+//
+
 import SwiftUI
 
 struct AddNoteView: View {
@@ -49,11 +56,11 @@ struct AddNoteView: View {
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             notificationManager.checkNotificationStatus()
         }
-        .alert("Bildirimlere İzin Verilmedi", isPresented: $showAlert) {
-            Button("Ayarları Aç") { notificationManager.openAppSettings() }
-            Button("Tamam", role: .cancel) {}
+        .alert("Notifications Not Allowed", isPresented: $showAlert) {
+            Button("Open Settings") { notificationManager.openAppSettings() }
+            Button("OK", role: .cancel) {}
         } message: {
-            Text("Hatırlatma eklemek için bildirimlere izin vermelisiniz.")
+            Text("You must allow notifications to add a reminder.")
         }
     }
 
@@ -99,7 +106,7 @@ struct NoteTextField: View {
                 .font(.body)
                 .bold()
                 .foregroundColor(.black.opacity(0.7))
-            TextField("Başlık giriniz..", text: $text)
+            TextField("Note title..", text: $text)
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(15)
@@ -193,7 +200,7 @@ struct SaveButton: View {
     
     var body: some View {
         Button(action: action) {
-            Text(isEditing ? "Güncelle" : "Kaydet")
+            Text(isEditing ? "Update" : "Save")
                 .padding()
                 .font(.system(size: 15, weight: .bold, design: .rounded))
                 .frame(width: 150)

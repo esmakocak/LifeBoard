@@ -15,11 +15,11 @@ struct WelcomeView: View {
                 Text("Life Board")
                     .font(.system(size: 38, weight: .heavy, design: .rounded))
                 
-                Text("Take notes, exercise your brain daily. Memorize things.")
+                Text("Take notes, exercise your brain daily, memorize things.")
                     .font(.headline)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
-
+                
                 Button(action: {
                     UserDefaults.standard.set(true, forKey: "hasSeenWelcomeScreen")
                 }) {
@@ -41,11 +41,10 @@ struct WelcomeView: View {
     }
 }
 
-
 struct BackgroundIconsView: View {
     @State private var isAnimating = false
     @State private var angle: Double = 0
-
+    
     let icons: [(name: String, backgroundColor: Color, iconColor: Color, position: CGPoint, size: CGFloat)] = [
         ("pill.fill", Color("lightPink"), Color("darkPink"), CGPoint(x: 80, y: 80), 70),
         ("bell.fill", Color("lightBlue"), Color("darkBlue"), CGPoint(x: 310, y: 140), 100),
@@ -66,20 +65,18 @@ struct BackgroundIconsView: View {
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(icon.iconColor)
-                            .frame(width: icon.size * 0.5, height: icon.size * 0.5) // İkonun boyutu
+                            .frame(width: icon.size * 0.5, height: icon.size * 0.5)
                     )
-                    .scaleEffect(isAnimating ? 1.1 : 1.0) // Büyütme & Küçültme
+                    .scaleEffect(isAnimating ? 1.1 : 1.0)
                     .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: isAnimating)
                     .onAppear {
                         isAnimating = true
                     }
-
                     .position(icon.position)
             }
         }
     }
 }
-
 
 #Preview {
     WelcomeView()

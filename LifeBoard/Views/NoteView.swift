@@ -12,7 +12,7 @@ struct NoteView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @StateObject private var viewModel: NoteViewModel
     @State private var isAddingNote = false
-    @State private var searchText: String = "" // Arama için state
+    @State private var searchText: String = ""
     @State private var selectedNote: Note?
     @State private var isDetailPresented = false
     
@@ -50,14 +50,13 @@ struct NoteView: View {
                             .frame(maxWidth: .infinity, minHeight: 500)
                         } else {
                             HStack(alignment: .top, spacing: 10) {
-                                // Sol sütun
+                                // MARK: Columns
                                 LazyVStack(spacing: 10) {
                                     ForEach(filteredNotes.enumerated().filter { $0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
                                         noteCard(note: note)
                                     }
                                 }
                                 
-                                // Sağ sütun
                                 LazyVStack(spacing: 10) {
                                     ForEach(filteredNotes.enumerated().filter { !$0.offset.isMultiple(of: 2) }.map { $0.element }) { note in
                                         noteCard(note: note)
@@ -74,15 +73,15 @@ struct NoteView: View {
                 }
             }
             .overlay(
-                // 📌 **Floating Action Button (FAB)**
+                // MARK: Add Button
                 Button(action: {
                     isAddingNote = true
                 }) {
                     Image(systemName: "plus")
                         .font(.system(size: 26, weight: .bold))
                         .frame(width: 60, height: 60)
-                        .background(Color.black) // FAB arka plan rengi
-                        .foregroundColor(.white) // İkon rengi
+                        .background(Color.black)
+                        .foregroundColor(.white)
                         .clipShape(Circle())
                         .shadow(radius: 5)
                 }
@@ -90,7 +89,7 @@ struct NoteView: View {
                     .sheet(isPresented: $isAddingNote) {
                         AddNoteView(viewModel: viewModel)
                     },
-                alignment: .bottomTrailing // 📌 Sağ alt köşeye sabitle
+                alignment: .bottomTrailing
             )
         }
         .fullScreenCover(item: $selectedNote) { note in
@@ -98,49 +97,45 @@ struct NoteView: View {
         }
     }
     
-    // 🔹 **Not Kartı**
+    // MARK: Note Card
     @ViewBuilder
     private func noteCard(note: Note) -> some View {
-            VStack(alignment: .leading, spacing: 8) {
-                
-                Text(note.text ?? "Boş Not")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .padding()
-                    .foregroundColor(.black)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                
-                if let subtext = note.subtext, !subtext.isEmpty {
-                    Text(subtext)
-                        .font(.headline)
-                        .foregroundColor(.black.opacity(0.7))
-                        .truncationMode(.tail)
-                        .padding(.horizontal)
-                }
-                
+        VStack(alignment: .leading, spacing: 8) {
+            
+            Text(note.text ?? "Boş Not")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .padding()
+                .foregroundColor(.black)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            if let subtext = note.subtext, !subtext.isEmpty {
+                Text(subtext)
+                    .font(.headline)
+                    .foregroundColor(.black.opacity(0.7))
+                    .truncationMode(.tail)
+                    .padding(.horizontal)
+            }
+            
+            Spacer()
+            
+            HStack {
                 Spacer()
-                
-                HStack {
-
-                    Spacer()
-
-                }
             }
-            .padding(5)
-            .frame(maxWidth: .infinity)
-            .frame(height: CGFloat.random(in: 200...330))
-            .background(Color.fromHex(note.colorHex ?? "#FFC8DD"))
-            .cornerRadius(15)
-            .onTapGesture {
-                selectedNote = note
-                isDetailPresented = true
-            }
-        
+        }
+        .padding(5)
+        .frame(maxWidth: .infinity)
+        .frame(height: CGFloat.random(in: 200...330))
+        .background(Color.fromHex(note.colorHex ?? "#FFC8DD"))
+        .cornerRadius(15)
+        .onTapGesture {
+            selectedNote = note
+            isDetailPresented = true
+        }
         .buttonStyle(PlainButtonStyle())
     }
     
-    
-    // Search Bar
+    // MARK: Search Bar
     @ViewBuilder
     func SearchBar() -> some View {
         HStack(spacing: 10) {
@@ -157,7 +152,6 @@ struct NoteView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
     }
-    
 }
 
 #Preview {

@@ -28,18 +28,18 @@ class MemoryGameViewModel: ObservableObject {
         guard !cards[index].isFlipped else { return }
         
         if let firstIndex = firstSelectedIndex {
-            // İkinci kart seçildi, karşılaştırma yap
+            // Second card selected, make comparision
             if cards[firstIndex].emoji == cards[index].emoji {
                 // Eşleşme oldu
                 cards[firstIndex].isMatched = true
                 cards[index].isMatched = true
-                HapticManager.instance.notification(type: .success) // Doğru eşleşme titreşimi
+                HapticManager.instance.notification(type: .success) // Matched
                 
                 if cards.allSatisfy({ $0.isMatched }) {
-                    isGameOver = true // Tüm kartlar eşleştiğinde oyunu bitir
+                    isGameOver = true
                 }
             } else {
-                // Yanlış eşleşme, hata titreşimi
+                // Not matched
                 HapticManager.instance.notification(type: .error)
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
@@ -49,7 +49,7 @@ class MemoryGameViewModel: ObservableObject {
             }
             firstSelectedIndex = nil
         } else {
-            // İlk kart seçildi
+            // First card selected
             firstSelectedIndex = index
         }
         cards[index].isFlipped.toggle()
@@ -72,7 +72,7 @@ struct MemoryCardsView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        dismiss()  // 📌 Sayfayı kapat
+                        dismiss()  
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.largeTitle)

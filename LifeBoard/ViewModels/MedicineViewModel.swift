@@ -13,32 +13,30 @@ import SwiftUI
 class MedicineViewModel: ObservableObject {
     @Published var medicines: [Medicine] = []
     @AppStorage("lastCheckedDate") private var lastCheckedDate: Double = 0
-
+    
     let weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     
     private let viewContext: NSManagedObjectContext
     
     init(context: NSManagedObjectContext) {
         self.viewContext = context
-        fetchMedicines() // 📌 Önce ilaçları getir
-        checkAndResetTakenStatus() // ✅ Sonra sıfırlama kontrolünü yap
+        fetchMedicines()
+        checkAndResetTakenStatus()
     }
     
-    // **Tüm ilaçları getir**
+    // Fetch Medicines
     func fetchMedicines() {
         let request: NSFetchRequest<Medicine> = Medicine.fetchRequest()
         
-        //  En son eklenen en üstte olacak şekilde sıralama ekle
         let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: false)
         request.sortDescriptors = [sortDescriptor]
-
+        
         do {
             medicines = try viewContext.fetch(request)
         } catch {
             print("Error fetching medicines: \(error.localizedDescription)")
         }
     }
-    
     
     func addMedicine(name: String, selectedDays: [String], time: String, imageData: Data?) {
         let newMedicine = Medicine(context: viewContext)
@@ -55,19 +53,12 @@ class MedicineViewModel: ObservableObject {
         saveContext()
     }
     
-    
-//    func getDaysFromBitmask(_ bitmask: Int16) -> [String] {
-//        return weekDays.enumerated().compactMap { index, day in
-//            (bitmask & (1 << index)) != 0 ? day : nil
-//        }
-//    }
-
     func getDaysFromBitmask(_ bitmask: Int16) -> [String] {
         let selectedDays = weekDays.enumerated().compactMap { index, day in
             (bitmask & (1 << index)) != 0 ? day : nil
         }
         
-        // Eğer tüm günler seçildiyse, sadece "Everyday" döndür
+        // If every day is selected, than just return "Everyday"
         return selectedDays.count == weekDays.count ? ["Everyday"] : selectedDays
     }
     
@@ -76,33 +67,19 @@ class MedicineViewModel: ObservableObject {
         return medicines.filter { $0.daysBitmask & (1 << todayIndex) != 0 }
     }
     
-    // **İlaç sil**
+    // Delete Medicine
     func deleteMedicine(medicine: Medicine) {
         viewContext.delete(medicine)
         saveContext()
     }
     
-    // **İlaç durumunu güncelle**
+    // isTaken Control
     func toggleTaken(medicine: Medicine) {
         medicine.isTaken.toggle()
         saveContext()
     }
     
-    // **Mock Data Ekle**
-    func addMockData() {
-        let mockMedicines = [
-            ("Aspirin", ["Mon", "Wed", "Fri"], "08:00", UIImage(named: "aspirin")),
-            ("Paracetamol", ["Tue", "Thu"], "14:30", UIImage(named: "paracetamol")),
-            ("Ibuprofen", ["Sat", "Sun"], "20:00", UIImage(named: "ibuprofen"))
-        ]
-        
-        for (name, days, time, image) in mockMedicines {
-            let imageData = image?.jpegData(compressionQuality: 0.8) // Resmi Data'ya çevir
-            addMedicine(name: name, selectedDays: days, time: time, imageData: imageData)
-        }
-    }
-    
-    // **CoreData'da değişiklikleri kaydet**
+    // Save Changes to CoreData
     private func saveContext() {
         do {
             try viewContext.save()
@@ -112,7 +89,7 @@ class MedicineViewModel: ObservableObject {
         }
     }
     
-    // **Yeni gün başladı mı kontrol et ve ilaçları sıfırla**
+    // Control new day for reset medicine's isTaken property
     func checkAndResetTakenStatus() {
         let calendar = Calendar.current
         let lastChecked = lastCheckedDate == 0 ? Date.distantPast : Date(timeIntervalSince1970: lastCheckedDate)
@@ -120,20 +97,13 @@ class MedicineViewModel: ObservableObject {
         if !calendar.isDate(lastChecked, inSameDayAs: Date()) {
             resetAllMedicineTakenStatus()
             lastCheckedDate = Date().timeIntervalSince1970
-        } else {
-            print("⏳ No reset needed, same day.")
         }
     }
     
-
-    
-    // **Tüm ilaçların `isTaken` değerini sıfırla**
     private func resetAllMedicineTakenStatus() {
         for medicine in medicines {
             medicine.isTaken = false
         }
         saveContext()
     }
-
-    
 }

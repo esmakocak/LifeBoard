@@ -10,12 +10,12 @@ struct NoteDetailView: View {
     let note: Note
     @ObservedObject var viewModel: NoteViewModel
     @Environment(\.dismiss) var dismiss
-    @State private var isEditing = false // Düzenleme ekranını kontrol eden state
-
+    @State private var isEditing = false
+    
     var body: some View {
         let backgroundColor = Color.fromHex(note.colorHex ?? "#FFFF00")
         let iconColor = Color.getDarkColor(for: note.colorHex ?? "#FFFF00")
-
+        
         ZStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 10) {
                 
@@ -36,7 +36,7 @@ struct NoteDetailView: View {
                     Spacer()
                     
                     Button {
-                        isEditing = true // Düzenleme ekranını aç
+                        isEditing = true // Editing screen
                     } label : {
                         Image(systemName: "pencil")
                             .font(.title2)
@@ -63,7 +63,7 @@ struct NoteDetailView: View {
                     }
                 }
                 .padding(.bottom)
-
+                
                 ScrollView {
                     VStack(alignment: .leading) {
                         Text(note.text ?? "Boş Not")
@@ -90,14 +90,14 @@ struct NoteDetailView: View {
             WaveShape()
                 .fill(backgroundColor)
                 .frame(height: 190)
-
+            
             WaveShape()
                 .fill(iconColor.opacity(0.8))
                 .frame(height: 150)
         }
         .edgesIgnoringSafeArea(.bottom)
-        .sheet(isPresented: $isEditing) { // Düzenleme ekranını açıyor
-            AddNoteView(viewModel: viewModel, noteToEdit: note) // Mevcut notu düzenleme için gönderiyoruz
+        .sheet(isPresented: $isEditing) {
+            AddNoteView(viewModel: viewModel, noteToEdit: note)
         }
     }
 }

@@ -11,21 +11,24 @@ import SwiftUI
 class HapticManager {
     static let instance = HapticManager() // Singleton
     
-    /// Bildirim titreşimleri (başarı, hata, uyarı)
+    // Notification vibrations (success, error, warning)
     func notification(type: UINotificationFeedbackGenerator.FeedbackType) {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(type)
     }
     
-    /// Dokunma ve darbe titreşimleri (light, medium, heavy, rigid, soft)
+    // Touch and impact vibrations (light, medium, heavy, rigid, soft)
     func impact(style: UIImpactFeedbackGenerator.FeedbackStyle) {
         let generator = UIImpactFeedbackGenerator(style: style)
         generator.impactOccurred()
     }
     
-    /// Geri bildirim titreşimi (örneğin: bir seçim yapıldığında)
+    // Feedback vibration (e.g., when a selection is made)
     func selection() {
         let generator = UISelectionFeedbackGenerator()
         generator.selectionChanged()
     }
 }
+
+
+

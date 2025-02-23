@@ -15,11 +15,11 @@ struct AddMedicineView: View {
     @State private var name: String = ""
     @State private var days: String = ""
     @State private var time: String = ""
-    @State private var selectedImage: UIImage? // Kullanıcıdan seçilen resim
+    @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented = false
     
     @State private var selectedDays: [String] = []
-
+    
     
     var body: some View {
         NavigationStack {
@@ -31,7 +31,7 @@ struct AddMedicineView: View {
                 
                 VStack(alignment: .leading, spacing: 10) {
                     
-                    // **İlaç Adı**
+                    // MARK: Medicine Name
                     Text("Medicine Name")
                         .font(.body)
                         .bold()
@@ -44,6 +44,7 @@ struct AddMedicineView: View {
                         .padding(.bottom, 10)
                     
                     
+                    // MARK: Frequency Selection
                     Text("Frequency")
                         .font(.body)
                         .bold()
@@ -52,7 +53,7 @@ struct AddMedicineView: View {
                     DaySelectionView(selectedDays: $selectedDays).padding(.bottom, 10)
                     
                     
-                    // **Saat**
+                    // MARK: Notes about Medicine
                     Text("Note")
                         .font(.body)
                         .bold()
@@ -64,7 +65,8 @@ struct AddMedicineView: View {
                         .cornerRadius(15)
                         .padding(.bottom, 10)
                     
-                    // **Resim Seçme **
+                    
+                    // MARK: Photo Selection
                     Text("Medicine Photo")
                         .font(.body)
                         .bold()
@@ -103,7 +105,7 @@ struct AddMedicineView: View {
                     }
                     
                     
-                    // **İlaç Ekle Butonu**
+                    // MARK: Save Button
                     HStack {
                         Spacer()
                         
@@ -122,13 +124,11 @@ struct AddMedicineView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(20)
                         }
-                        .disabled(name.isEmpty || selectedDays.isEmpty) // Kullanıcı ilaç ismi ve günleri seçmedikçe buton devre dışı
+                        .disabled(name.isEmpty || selectedDays.isEmpty) // Disable if name & frequency are empty
                         
                         Spacer()
                     }
                     .padding()
-                    
-                    
                     
                     Spacer()
                 }
@@ -142,15 +142,15 @@ struct AddMedicineView: View {
     }
 }
 
-
+// MARK: Frequency Selection
 struct DaySelectionView: View {
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     @Binding var selectedDays: [String]
-
-    let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 7) // 📌 7 sütun
-
+    
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 7)
+    
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 15) { // 📌 7 eşit sütun
+        LazyVGrid(columns: columns, spacing: 15) {
             ForEach(days, id: \.self) { day in
                 Button(action: {
                     if selectedDays.contains(day) {
@@ -159,12 +159,12 @@ struct DaySelectionView: View {
                         selectedDays.append(day)
                     }
                 }) {
-                    Text(day.prefix(3)) // "Mon", "Tue" gibi göster
+                    Text(day.prefix(3))
                         .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .frame(width: 40, height: 40) 
+                        .frame(width: 40, height: 40)
                         .background(selectedDays.contains(day) ? Color("darkPurple") : Color.gray.opacity(0.2))
                         .foregroundColor(selectedDays.contains(day) ? .white : .black.opacity(0.7))
-                        .clipShape(Circle()) // 📌 Daire buton
+                        .clipShape(Circle())
                 }
             }
         }

@@ -9,18 +9,18 @@ import Foundation
 import CoreData
 
 struct PersistenceController {
-    static let shared = PersistenceController() // 📌 Singleton ile tek bir instance oluşturduk
+    static let shared = PersistenceController() // Singleton
     let container: NSPersistentContainer
-
+    
     init() {
-        container = NSPersistentContainer(name: "Model") // 📌 CoreData Model'in adı "Model" olarak ayarlandı
+        container = NSPersistentContainer(name: "Model") // set CoreData Model as 'Model'
         container.loadPersistentStores { _, error in
             if let error = error as NSError? {
                 fatalError("CoreData yüklenemedi: \(error), \(error.userInfo)")
             }
         }
     }
-
+    
     var context: NSManagedObjectContext {
         return container.viewContext
     }

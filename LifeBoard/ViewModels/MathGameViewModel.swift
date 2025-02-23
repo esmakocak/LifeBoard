@@ -31,16 +31,16 @@ class MathGameViewModel: ObservableObject {
         selectedAnswer = answer
         isCorrectAnswerSelected = (answer == correctAnswer)
         isAnswerSelected = true
-
+        
         if isCorrectAnswerSelected == true {
             score += 1
             HapticManager.instance.notification(type: .success)
         } else {
             HapticManager.instance.notification(type: .error)
         }
-
+        
         questionCount += 1
-
+        
         if questionCount >= 5 {
             gameOver = true
         } else {
@@ -48,7 +48,7 @@ class MathGameViewModel: ObservableObject {
                 self.generateAnswers()
                 self.selectedAnswer = nil
                 self.isCorrectAnswerSelected = nil
-                self.isAnswerSelected = false // Yeni soru geldiğinde tekrar butonları aktif et
+                self.isAnswerSelected = false // Activate buttons when new question appears
             }
         }
     }
@@ -57,16 +57,16 @@ class MathGameViewModel: ObservableObject {
         firstNumber = Int.random(in: 0...(difficulty / 2))
         secondNumber = Int.random(in: 0...(difficulty / 2))
         correctAnswer = firstNumber + secondNumber
-
+        
         var answerList = Set<Int>()
-
+        
         while answerList.count < 3 {
             let randomWrongAnswer = Int.random(in: 0...difficulty)
             if randomWrongAnswer != correctAnswer {
                 answerList.insert(randomWrongAnswer)
             }
         }
-
+        
         answerList.insert(correctAnswer)
         choiceArray = Array(answerList).shuffled()
     }
@@ -78,9 +78,8 @@ class MathGameViewModel: ObservableObject {
             self.gameOver = false
             self.selectedAnswer = nil
             self.isCorrectAnswerSelected = nil
-            self.isAnswerSelected = false 
+            self.isAnswerSelected = false
             self.generateAnswers()
         }
     }
-
 }
