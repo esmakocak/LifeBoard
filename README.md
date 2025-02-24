@@ -1,8 +1,8 @@
 LifeBoard is a SwiftUI app which designed to assist people with Alzheimer’s or memory-related issues
 
-	•	Uses **CoreData** for persistent data storage and management.
+	•	Uses CoreData for persistent data storage and management.
 
-	•	Integrates **UserNotifications** to schedule reminders and alerts.
+	•	Integrates UserNotifications to schedule reminders and alerts.
 
 	•	Allows users to add, edit, and delete notes and medicines efficiently.
 
