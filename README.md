@@ -1,3 +1,5 @@
+WWDC, Swift Student Challenge 2025 Submission
+
 LifeBoard is a SwiftUI app which designed to assist people with Alzheimer’s or memory-related issues
 
 • Uses CoreData for persistent data storage and management.
